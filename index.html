@@ -38,7 +38,10 @@
   .price-group input {
     background: #1a1a2e; border: 1px solid #555; color: #fff; padding: 4px 4px;
     width: 40px; font-family: monospace; font-size: 0.9em; text-align: right;
+    -moz-appearance: textfield;
   }
+  .price-group input::-webkit-outer-spin-button,
+  .price-group input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .price-group input:focus { border-color: #a855f7; outline: none; }
   .price-group .cur { font-size: 0.85em; }
   .cur-g { color: #fbbf24; }
