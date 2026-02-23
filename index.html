@@ -137,6 +137,23 @@
 
   .vendor-tag { font-size: 0.65em; color: #065f46; background: #064e3b; padding: 1px 4px; border-radius: 2px; margin-left: 4px; vertical-align: middle; }
 
+  /* Price wrap: groups price-group + reset btn inline */
+  .price-wrap { display: inline-flex; align-items: center; gap: 3px; }
+  .reset-btn {
+    background: none; border: none; color: #333; font-size: 0.85em; cursor: pointer;
+    padding: 1px 2px; line-height: 1; transition: color 0.15s; flex-shrink: 0;
+  }
+  .reset-btn:hover { color: #a855f7; }
+
+  /* Method toggle: auto / buy / craft */
+  .method-btns { display: inline-flex; gap: 2px; margin-left: 6px; }
+  .mbtn {
+    background: none; border: 1px solid #2a2a40; color: #444; font-family: monospace;
+    font-size: 0.68em; padding: 1px 5px; cursor: pointer; transition: all 0.15s; text-transform: uppercase;
+  }
+  .mbtn:hover { border-color: #555; color: #999; }
+  .mbtn.active { border-color: #a855f7; color: #a855f7; background: #1a0a2e; }
+
   .r-vol { font-size: 0.75em; letter-spacing: 1px; }
 
   .empty-msg { color: #555; font-size: 0.85em; padding: 20px 0; max-width: 700px; }
@@ -167,6 +184,7 @@
 <script>
 let RECIPES = {}, ITEMS = {}, PRICES = {};
 let MANUAL_PRICES = {}; // itemId -> copper value (overrides AH price)
+let FORCE_METHOD = {};  // itemId -> 'buy' | 'craft' (undefined = auto)
 let currentFaction = '', currentProf = '';
 let recipeByResult = {};
 
@@ -365,12 +383,21 @@ function calcCraftCost(recipe, visited = new Set()) {
   for (const r of recipe.reagents) {
     const sub = recipeByResult[r.itemId];
     const buy = getEffectivePrice(r.itemId);
-    if (sub && !visited.has(sub.spellId)) {
+    const forced = FORCE_METHOD[r.itemId];
+
+    if (sub && !visited.has(sub.spellId) && forced !== 'buy') {
       const craft = calcCraftCost(sub, new Set(visited));
-      if (buy !== null && craft !== null) total += Math.min(buy, craft) * r.qty;
-      else if (buy !== null) total += buy * r.qty;
-      else if (craft !== null) total += craft * r.qty;
-      else return null;
+      if (forced === 'craft') {
+        if (craft !== null) total += craft * r.qty;
+        else if (buy !== null) total += buy * r.qty; // fallback if craft not computable
+        else return null;
+      } else {
+        // auto: pick cheapest
+        if (buy !== null && craft !== null) total += Math.min(buy, craft) * r.qty;
+        else if (buy !== null) total += buy * r.qty;
+        else if (craft !== null) total += craft * r.qty;
+        else return null;
+      }
     } else {
       if (buy !== null) total += buy * r.qty;
       else return null;
@@ -420,10 +447,14 @@ function readCopper(grp) {
 
 function priceGroupHTML(dataItem) {
   const attr = dataItem ? ` data-item="${dataItem}"` : '';
-  return `<span class="price-group"${attr}>`
+  const resetBtn = dataItem ? `<button type="button" class="reset-btn" data-item="${dataItem}" title="Reset to AH/vendor price">↺</button>` : '';
+  return `<span class="price-wrap">`
+    + `<span class="price-group"${attr}>`
     + `<input type="number" class="pg" min="0" placeholder="0"><span class="cur cur-g">g</span>`
     + `<input type="number" class="ps" min="0" max="99" placeholder="0"><span class="cur cur-s">s</span>`
     + `<input type="number" class="pc" min="0" max="99" placeholder="0"><span class="cur cur-c">c</span>`
+    + `</span>`
+    + resetBtn
     + `</span>`;
 }
 
@@ -564,7 +595,14 @@ function buildDetail(container, recipe) {
 
     if (sub) {
       html += `<div class="sub-reagents" data-parent="${r.itemId}">`;
-      html += `<div class="sub-label"><span class="check sub-check"></span> craft from:</div>`;
+      html += `<div class="sub-label">`
+            + `<span class="check sub-check"></span>`
+            + `<span class="method-btns" data-item="${r.itemId}">`
+            + `<button type="button" class="mbtn" data-method="auto">auto</button>`
+            + `<button type="button" class="mbtn" data-method="buy">buy</button>`
+            + `<button type="button" class="mbtn" data-method="craft">craft</button>`
+            + `</span>`
+            + ` craft from:</div>`;
       sub.reagents.forEach(sr => {
         const sname = ITEMS[String(sr.itemId)]?.name || `Item #${sr.itemId}`;
         const srVendor = VENDOR_PRICES[sr.itemId] !== undefined;
@@ -610,6 +648,40 @@ function buildDetail(container, recipe) {
   const sellAH = recipe.resultId ? getEffectivePrice(recipe.resultId) : null;
   if (sellAH !== null && sellGrp) copperToInputs(sellAH, sellGrp);
 
+  // Reset buttons
+  container.querySelectorAll('.reset-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const rawItem = btn.dataset.item;
+      if (rawItem === 'sell') {
+        delete MANUAL_PRICES[recipe.resultId];
+        const orig = recipe.resultId ? getEffectivePrice(recipe.resultId) : null;
+        if (orig !== null && sellGrp) copperToInputs(orig, sellGrp);
+      } else {
+        const id = parseInt(rawItem);
+        delete MANUAL_PRICES[id];
+        const grp = container.querySelector(`.price-group[data-item="${rawItem}"]`);
+        const orig = getEffectivePrice(id);
+        if (grp && orig !== null) copperToInputs(orig, grp);
+      }
+      recalcDetail();
+    });
+  });
+
+  // Method toggle buttons (auto / buy / craft)
+  container.querySelectorAll('.method-btns').forEach(btns => {
+    const itemId = parseInt(btns.dataset.item);
+    btns.querySelectorAll('.mbtn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const method = btn.dataset.method;
+        if (method === 'auto') delete FORCE_METHOD[itemId];
+        else FORCE_METHOD[itemId] = method;
+        recalcDetail();
+      });
+    });
+  });
+
   // Stack button popovers
   container.querySelectorAll('.stack-btn').forEach(btn => {
     btn.addEventListener('click', e => {
@@ -624,8 +696,9 @@ function buildDetail(container, recipe) {
   // Stack calculators: qty @ totalPrice -> fills per-item price group
   container.querySelectorAll('.stack-panel').forEach(panel => {
     const wrap = panel.parentElement;
-    const priceGrp = wrap.previousElementSibling; // the .price-group before .stack-wrap
-    if (!priceGrp?.classList.contains('price-group')) return;
+    const prev = wrap.previousElementSibling; // .price-wrap (or .price-group for stack inner groups)
+    const priceGrp = prev?.classList.contains('price-group') ? prev : prev?.querySelector('.price-group');
+    if (!priceGrp) return;
     const stackQty = panel.querySelector('.stack-qty');
     const stackPriceGrp = panel.querySelector('.price-group');
 
@@ -668,7 +741,7 @@ function buildDetail(container, recipe) {
     pv.innerHTML = formatCopper(profit);
     pv.className = 'fv profit-val ' + (profit !== null ? (profit >= 0 ? 'pos' : 'neg') : '');
 
-    // Update buy vs craft checkmarks for sub-components
+    // Update buy vs craft checkmarks and method toggle states for sub-components
     container.querySelectorAll('.sub-reagents[data-parent]').forEach(subEl => {
       const parentId = parseInt(subEl.dataset.parent);
       const parentReagent = recipe.reagents.find(r => r.itemId === parentId);
@@ -679,13 +752,20 @@ function buildDetail(container, recipe) {
       const buyCost = buyPrice !== null ? buyPrice * parentReagent.qty : null;
       const craftCostSub = calcCraftCost(sub);
       const totalCraft = craftCostSub !== null ? craftCostSub * parentReagent.qty : null;
-      const cheaper = (buyCost !== null && totalCraft !== null) ? (buyCost <= totalCraft ? 'buy' : 'craft')
+      const forced = FORCE_METHOD[parentId];
+      const auto = (buyCost !== null && totalCraft !== null) ? (buyCost <= totalCraft ? 'buy' : 'craft')
         : (buyCost !== null ? 'buy' : (totalCraft !== null ? 'craft' : null));
+      const active = forced || auto;
+
+      // Update method toggle button states
+      subEl.querySelectorAll('.mbtn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.method === (forced || 'auto'));
+      });
 
       const checkEl = subEl.querySelector('.sub-check');
       const buyLabel = subEl.querySelector('.buy-cheaper-label');
-      checkEl.textContent = cheaper === 'craft' ? '✓' : '';
-      if (buyLabel) buyLabel.style.display = cheaper === 'buy' ? 'flex' : 'none';
+      checkEl.textContent = active === 'craft' ? '✓' : '';
+      if (buyLabel) buyLabel.style.display = active === 'buy' ? 'flex' : 'none';
     });
 
     scheduleUpdate();

@@ -1,0 +1,9 @@
+## Interface: 11200
+## Title: CraftCalc
+## Notes: Profession profit calculator using aux AH scan data
+## Author: you
+## Version: 1.0
+## OptionalDeps: aux-addon
+
+Data.lua
+CraftCalc.lua
