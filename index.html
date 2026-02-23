@@ -64,7 +64,9 @@ let DATA = {};
 
 async function init() {
   const res = await fetch('data.json');
+  if (!res.ok) { console.error('Failed to load data.json:', res.status, res.url); return; }
   DATA = await res.json();
+  if (!DATA.professions) { console.error('data.json missing professions key', DATA); return; }
   const app = document.getElementById('app');
 
   Object.entries(DATA.professions).forEach(([, prof]) => {
