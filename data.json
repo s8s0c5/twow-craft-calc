@@ -1,0 +1,27 @@
+{
+  "items": {
+    "runecloth": {
+      "name": "Runecloth"
+    },
+    "rugged-leather": {
+      "name": "Rugged Leather"
+    },
+    "rune-thread": {
+      "name": "Rune Thread"
+    },
+    "bolt-of-runecloth": {
+      "name": "Bolt of Runecloth",
+      "recipe": [
+        { "item": "runecloth", "qty": 5 }
+      ]
+    },
+    "runecloth-bag": {
+      "name": "Runecloth Bag",
+      "recipe": [
+        { "item": "bolt-of-runecloth", "qty": 5 },
+        { "item": "rugged-leather", "qty": 2 },
+        { "item": "rune-thread", "qty": 1 }
+      ]
+    }
+  }
+}

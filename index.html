@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TWoW Craft Calc</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: monospace; background: #1a1a2e; color: #ddd; padding: 20px; }
+  h1 { color: #a855f7; margin-bottom: 16px; font-size: 1.3em; }
+
+  .recipe-list { display: flex; flex-direction: column; gap: 8px; max-width: 500px; }
+
+  .recipe-btn {
+    background: #16213e; border: 1px solid #334; color: #ddd;
+    padding: 10px 14px; text-align: left; cursor: pointer; font-family: monospace; font-size: 1em;
+  }
+  .recipe-btn:hover { border-color: #a855f7; }
+
+  .recipe-detail { display: none; background: #0f3460; border: 1px solid #334; padding: 14px; margin-top: -1px; }
+  .recipe-detail.open { display: block; }
+
+  .component {
+    display: flex; align-items: center; gap: 8px; padding: 4px 0;
+    border-bottom: 1px solid #1a1a2e;
+  }
+  .component:last-child { border-bottom: none; }
+  .comp-name { flex: 1; }
+  .comp-qty { color: #888; min-width: 30px; }
+
+  .sub-components {
+    margin-left: 20px; border-left: 2px solid #334; padding-left: 10px; margin-top: 2px;
+  }
+
+  .price-group { display: inline-flex; align-items: center; gap: 2px; }
+  .price-group input {
+    background: #1a1a2e; border: 1px solid #555; color: #fff; padding: 4px 4px;
+    width: 40px; font-family: monospace; font-size: 0.9em; text-align: right;
+  }
+  .price-group input:focus { border-color: #a855f7; outline: none; }
+  .price-group .cur { font-size: 0.85em; }
+  .cur-g { color: #fbbf24; }
+  .cur-s { color: #94a3b8; }
+  .cur-c { color: #b45309; }
+
+  .cost-label { color: #4ade80; font-weight: bold; margin-top: 10px; }
+  .sell-row { margin-top: 8px; display: flex; align-items: center; gap: 8px; }
+  .profit { font-weight: bold; margin-top: 6px; }
+  .profit.pos { color: #4ade80; }
+  .profit.neg { color: #f87171; }
+</style>
+</head>
+<body>
+<h1>TWoW Profession Auction Calc</h1>
+<div id="app" class="recipe-list"></div>
+
+<script>
+let DATA = {};
+
+async function init() {
+  const res = await fetch('data.json');
+  DATA = await res.json();
+  const app = document.getElementById('app');
+
+  const craftable = Object.entries(DATA.items).filter(([, v]) => v.recipe);
+  craftable.forEach(([id, item]) => {
+    const btn = document.createElement('button');
+    btn.className = 'recipe-btn';
+    btn.textContent = item.name;
+
+    const detail = document.createElement('div');
+    detail.className = 'recipe-detail';
+    detail.innerHTML = buildRecipeHTML(id);
+
+    btn.onclick = () => {
+      detail.classList.toggle('open');
+    };
+
+    app.appendChild(btn);
+    app.appendChild(detail);
+
+    detail.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', () => recalc(detail, id));
+    });
+  });
+}
+
+function priceInputHTML(dataAttr, extraClass) {
+  const cls = 'price-group' + (extraClass ? ' ' + extraClass : '');
+  const attr = dataAttr ? ` ${dataAttr}` : '';
+  return `<span class="${cls}"${attr}>`
+    + `<input type="number" class="pg" min="0" placeholder="0"><span class="cur cur-g">g</span>`
+    + `<input type="number" class="ps" min="0" max="99" placeholder="0"><span class="cur cur-s">s</span>`
+    + `<input type="number" class="pc" min="0" max="99" placeholder="0"><span class="cur cur-c">c</span>`
+    + `</span>`;
+}
+
+function readCopper(group) {
+  const g = parseInt(group.querySelector('.pg').value) || 0;
+  const s = parseInt(group.querySelector('.ps').value) || 0;
+  const c = parseInt(group.querySelector('.pc').value) || 0;
+  if (!group.querySelector('.pg').value && !group.querySelector('.ps').value && !group.querySelector('.pc').value) return null;
+  return g * 10000 + s * 100 + c;
+}
+
+function formatCopper(val) {
+  const neg = val < 0;
+  val = Math.abs(val);
+  const g = Math.floor(val / 10000);
+  const s = Math.floor((val % 10000) / 100);
+  const c = val % 100;
+  return (neg ? '-' : '') + `<span class="cur-g">${g}g</span> <span class="cur-s">${s}s</span> <span class="cur-c">${c}c</span>`;
+}
+
+function buildRecipeHTML(itemId) {
+  const item = DATA.items[itemId];
+  if (!item.recipe) return '';
+
+  let html = '';
+  item.recipe.forEach(comp => {
+    const ci = DATA.items[comp.item];
+    html += `<div class="component">`;
+    html += `<span class="comp-qty">${comp.qty}x</span>`;
+    html += `<span class="comp-name">${ci.name}</span>`;
+
+    if (ci.recipe) {
+      html += `</div>`;
+      html += `<div class="sub-components">`;
+      ci.recipe.forEach(sub => {
+        const si = DATA.items[sub.item];
+        const totalQty = sub.qty * comp.qty;
+        html += `<div class="component">`;
+        html += `<span class="comp-qty">${totalQty}x</span>`;
+        html += `<span class="comp-name">${si.name}</span>`;
+        html += priceInputHTML(`data-item="${sub.item}" data-base-qty="${sub.qty}"`);
+        html += `</div>`;
+      });
+      html += `</div>`;
+    } else {
+      html += priceInputHTML(`data-item="${comp.item}"`);
+      html += `</div>`;
+    }
+  });
+
+  html += `<div class="cost-label">Craft cost: <span class="craft-cost">—</span></div>`;
+  html += `<div class="sell-row">Sell price: ${priceInputHTML('', 'sell-price')}</div>`;
+  html += `<div class="profit">Profit: <span class="profit-val">—</span></div>`;
+  return html;
+}
+
+function recalc(detail, itemId) {
+  const item = DATA.items[itemId];
+  let total = 0;
+  let complete = true;
+
+  item.recipe.forEach(comp => {
+    const ci = DATA.items[comp.item];
+    if (ci.recipe) {
+      ci.recipe.forEach(sub => {
+        const grp = detail.querySelector(`.price-group[data-item="${sub.item}"]`);
+        const copper = grp ? readCopper(grp) : null;
+        if (copper !== null) {
+          total += copper * sub.qty * comp.qty;
+        } else {
+          complete = false;
+        }
+      });
+    } else {
+      const grp = detail.querySelector(`.price-group[data-item="${comp.item}"]`);
+      const copper = grp ? readCopper(grp) : null;
+      if (copper !== null) {
+        total += copper * comp.qty;
+      } else {
+        complete = false;
+      }
+    }
+  });
+
+  const costEl = detail.querySelector('.craft-cost');
+  costEl.innerHTML = complete ? formatCopper(total) : '—';
+
+  const sellGrp = detail.querySelector('.price-group.sell-price');
+  const profitEl = detail.querySelector('.profit-val');
+  const profitDiv = detail.querySelector('.profit');
+
+  const sellCopper = sellGrp ? readCopper(sellGrp) : null;
+  if (complete && sellCopper !== null) {
+    const profit = sellCopper - total;
+    profitEl.innerHTML = formatCopper(profit);
+    profitDiv.className = 'profit ' + (profit >= 0 ? 'pos' : 'neg');
+  } else {
+    profitEl.textContent = '—';
+    profitDiv.className = 'profit';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
