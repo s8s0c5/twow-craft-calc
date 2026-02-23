@@ -9,7 +9,9 @@
   body { font-family: monospace; background: #1a1a2e; color: #ddd; padding: 20px; }
   h1 { color: #a855f7; margin-bottom: 16px; font-size: 1.3em; }
 
-  .recipe-list { display: flex; flex-direction: column; gap: 8px; max-width: 500px; }
+  .prof-section { max-width: 500px; margin-bottom: 24px; }
+  .prof-header { color: #a855f7; font-size: 1em; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #334; padding-bottom: 4px; }
+  .recipe-list { display: flex; flex-direction: column; gap: 8px; }
 
   .recipe-btn {
     background: #16213e; border: 1px solid #334; color: #ddd;
@@ -62,26 +64,38 @@ async function init() {
   DATA = await res.json();
   const app = document.getElementById('app');
 
-  const craftable = Object.entries(DATA.items).filter(([, v]) => v.recipe);
-  craftable.forEach(([id, item]) => {
-    const btn = document.createElement('button');
-    btn.className = 'recipe-btn';
-    btn.textContent = item.name;
+  Object.entries(DATA.professions).forEach(([, prof]) => {
+    const section = document.createElement('div');
+    section.className = 'prof-section';
+    section.innerHTML = `<div class="prof-header">${prof.name}</div>`;
 
-    const detail = document.createElement('div');
-    detail.className = 'recipe-detail';
-    detail.innerHTML = buildRecipeHTML(id);
+    const list = document.createElement('div');
+    list.className = 'recipe-list';
 
-    btn.onclick = () => {
-      detail.classList.toggle('open');
-    };
+    prof.recipes.forEach(id => {
+      const item = DATA.items[id];
+      if (!item || !item.recipe) return;
 
-    app.appendChild(btn);
-    app.appendChild(detail);
+      const btn = document.createElement('button');
+      btn.className = 'recipe-btn';
+      btn.textContent = item.name;
 
-    detail.querySelectorAll('input').forEach(inp => {
-      inp.addEventListener('input', () => recalc(detail, id));
+      const detail = document.createElement('div');
+      detail.className = 'recipe-detail';
+      detail.innerHTML = buildRecipeHTML(id);
+
+      btn.onclick = () => detail.classList.toggle('open');
+
+      list.appendChild(btn);
+      list.appendChild(detail);
+
+      detail.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('input', () => recalc(detail, id));
+      });
     });
+
+    section.appendChild(list);
+    app.appendChild(section);
   });
 }
 

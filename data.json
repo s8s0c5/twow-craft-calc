@@ -1,4 +1,10 @@
 {
+  "professions": {
+    "tailoring": {
+      "name": "Tailoring",
+      "recipes": ["bolt-of-runecloth", "runecloth-bag"]
+    }
+  },
   "items": {
     "runecloth": {
       "name": "Runecloth"
