@@ -48,7 +48,7 @@
   .recipe-list { display: flex; flex-direction: column; gap: 2px; max-width: 700px; }
 
   .recipe-row {
-    display: grid; grid-template-columns: 1fr auto auto auto;
+    display: grid; grid-template-columns: 1fr auto auto 50px auto;
     gap: 12px; align-items: center; padding: 8px 14px;
     background: #1c1c30; border: 1px solid #2a2a40; cursor: pointer;
     font-size: 0.88em; transition: border-color 0.15s;
@@ -131,11 +131,12 @@
 
   .vendor-tag { font-size: 0.65em; color: #065f46; background: #064e3b; padding: 1px 4px; border-radius: 2px; margin-left: 4px; vertical-align: middle; }
 
+  .r-vol { font-size: 0.75em; letter-spacing: 1px; }
+
   .empty-msg { color: #555; font-size: 0.85em; padding: 20px 0; max-width: 700px; }
 </style>
 </head>
 <body>
-<h1>TWoW Profession Profit Calc</h1>
 
 <div class="drop-zone" id="drop-zone">
   Drop your <b>aux-addon.lua</b> here or click to browse
@@ -269,7 +270,7 @@ function parseAuxLua(text) {
           for (const w of weighted) { cum += w.weight; if (cum >= 0.5) { if (!marketValue) marketValue = w.value; break; } }
         }
       }
-      if (marketValue) prices[parseInt(em[1])] = { minBuyout, marketValue };
+      if (marketValue) prices[parseInt(em[1])] = { minBuyout, marketValue, volume: dataPoints.length };
     }
     result[key] = prices;
   }
@@ -320,10 +321,14 @@ const VENDOR_PRICES = {
 
 // ── Pricing ──────────────────────────────────────────────────────────────────
 
-function getAHPrice(itemId) {
+function getAHData(itemId) {
   const fp = PRICES[currentFaction];
   if (!fp) return null;
-  const p = fp[itemId] || fp[String(itemId)];
+  return fp[itemId] || fp[String(itemId)] || null;
+}
+
+function getAHPrice(itemId) {
+  const p = getAHData(itemId);
   return p ? (p.marketValue ?? p.minBuyout) : null;
 }
 
@@ -331,8 +336,20 @@ function getEffectivePrice(itemId) {
   const id = Number(itemId);
   if (MANUAL_PRICES[id] !== undefined) return MANUAL_PRICES[id] || null;
   const ah = getAHPrice(id);
-  if (ah !== null) return ah;
-  return VENDOR_PRICES[id] ?? null;
+  const vendor = VENDOR_PRICES[id] ?? null;
+  if (ah !== null && vendor !== null) return Math.min(ah, vendor);
+  return ah ?? vendor;
+}
+
+function getSellPrice(itemId) {
+  const raw = getEffectivePrice(itemId);
+  if (raw === null) return null;
+  return Math.floor(raw * 0.95);
+}
+
+function getVolume(itemId) {
+  const p = getAHData(Number(itemId));
+  return p ? (p.volume || 0) : 0;
 }
 
 function calcCraftCost(recipe, visited = new Set()) {
@@ -372,6 +389,14 @@ function formatCopperCompact(val) {
   const neg = val < 0; val = Math.abs(Math.round(val));
   const g = Math.floor(val / 10000), s = Math.floor((val % 10000) / 100), c = val % 100;
   return (neg ? '-' : '') + (g > 0 ? g + 'g ' : '') + s + 's ' + c + 'c';
+}
+
+function volBar(n) {
+  if (n === 0) return '<span style="color:#333">—</span>';
+  const filled = Math.min(5, Math.ceil(n / 5));
+  const colors = ['#ef4444','#f97316','#eab308','#84cc16','#22c55e'];
+  const c = colors[filled - 1];
+  return `<span style="color:${c}">${'▮'.repeat(filled)}<span style="color:#222">${'▯'.repeat(5 - filled)}</span></span>`;
 }
 
 function copperToInputs(copper, grp) {
@@ -436,7 +461,7 @@ function updateAllSummaryRows() {
     const recipe = recipeByResult[parseInt(row.dataset.resultId)] || row._recipe;
     if (!recipe) return;
     const craftCost = calcCraftCost(recipe);
-    const sellPrice = recipe.resultId ? getEffectivePrice(recipe.resultId) : null;
+    const sellPrice = recipe.resultId ? getSellPrice(recipe.resultId) : null;
     const profit = (craftCost !== null && sellPrice !== null) ? sellPrice - craftCost : null;
     row.querySelector('.r-cost').innerHTML = formatCopper(craftCost);
     row.querySelector('.r-sell').innerHTML = formatCopper(sellPrice);
@@ -468,15 +493,16 @@ function renderProf() {
 
   const enriched = prof.recipes.map(recipe => {
     const craftCost = calcCraftCost(recipe);
-    const sellPrice = recipe.resultId ? getEffectivePrice(recipe.resultId) : null;
+    const sellPrice = recipe.resultId ? getSellPrice(recipe.resultId) : null;
+    const vol = recipe.resultId ? getVolume(recipe.resultId) : 0;
     const profit = (craftCost !== null && sellPrice !== null) ? sellPrice - craftCost : null;
-    return { recipe, craftCost, sellPrice, profit };
+    return { recipe, craftCost, sellPrice, profit, vol };
   }).sort((a, b) => {
     if (a.profit !== null && b.profit !== null) return b.profit - a.profit;
     if (a.profit !== null) return -1; if (b.profit !== null) return 1; return 0;
   });
 
-  enriched.forEach(({ recipe, craftCost, sellPrice, profit }) => {
+  enriched.forEach(({ recipe, craftCost, sellPrice, profit, vol }) => {
     const visible = !q || recipe.name.toLowerCase().includes(q);
 
     const row = document.createElement('div');
@@ -488,6 +514,7 @@ function renderProf() {
     row.innerHTML = `<span class="r-name">${recipe.name}</span>`
       + `<span class="r-col r-cost">${formatCopper(craftCost)}</span>`
       + `<span class="r-col r-sell">${formatCopper(sellPrice)}</span>`
+      + `<span class="r-col r-vol" title="${vol} data points">${volBar(vol)}</span>`
       + `<span class="r-profit ${profit !== null ? (profit >= 0 ? 'pos' : 'neg') : 'unknown'}">${profit !== null ? formatCopperCompact(profit) : '—'}</span>`;
 
     const detail = document.createElement('div');
@@ -550,7 +577,7 @@ function buildDetail(container, recipe) {
   // Sell price row in footer
   html += `<div class="detail-footer">`;
   html += `<div class="footer-row"><span class="fl">Craft cost</span><span class="fv craft-cost-val">—</span></div>`;
-  html += `<div class="footer-row"><span class="fl">Sell price</span>`
+  html += `<div class="footer-row"><span class="fl">Sell price <span style="color:#555;font-size:0.8em">(-5%)</span></span>`
         + priceGroupHTML('sell')
         + `<span class="stack-wrap"><button type="button" class="stack-btn" title="Stack calc">÷</button>`
         + `<div class="stack-panel"><div class="stack-panel-label">Stack calculator</div>`
@@ -624,7 +651,7 @@ function buildDetail(container, recipe) {
     }
 
     const craftCost = calcCraftCost(recipe);
-    const sellCopper = recipe.resultId ? getEffectivePrice(recipe.resultId) : null;
+    const sellCopper = recipe.resultId ? getSellPrice(recipe.resultId) : null;
     const profit = (craftCost !== null && sellCopper !== null) ? sellCopper - craftCost : null;
 
     container.querySelector('.craft-cost-val').innerHTML = formatCopper(craftCost);
