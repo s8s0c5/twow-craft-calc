@@ -9,21 +9,18 @@
   body { font-family: monospace; background: #12121f; color: #ccc; padding: 20px; }
   h1 { color: #a855f7; margin-bottom: 16px; font-size: 1.2em; letter-spacing: 0.05em; }
 
-  /* Drop zone */
   .drop-zone {
     border: 2px dashed #2a2a40; padding: 20px; text-align: center;
     color: #555; font-size: 0.85em; margin-bottom: 16px; max-width: 700px;
     transition: all 0.2s; cursor: pointer; position: relative;
   }
   .drop-zone:hover, .drop-zone.drag-over { border-color: #a855f7; color: #a855f7; }
-  .drop-zone input[type="file"] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer;
-  }
+  .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   .drop-status { margin-top: 8px; font-size: 0.78em; }
   .drop-status.ok { color: #4ade80; }
   .drop-status.err { color: #f87171; }
 
-  .controls { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .controls { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
   .controls select {
     background: #1c1c30; border: 1px solid #2a2a40; color: #ccc;
     padding: 6px 10px; font-family: monospace; font-size: 0.85em;
@@ -32,7 +29,14 @@
   .controls label { color: #666; font-size: 0.8em; }
   .controls .ts { color: #555; font-size: 0.75em; }
 
-  .prof-tabs { display: flex; flex-wrap: wrap; gap: 2px; margin-bottom: 16px; }
+  .search-wrap { max-width: 700px; margin-bottom: 10px; }
+  .search-wrap input {
+    width: 100%; background: #1c1c30; border: 1px solid #2a2a40; color: #ccc;
+    padding: 7px 12px; font-family: monospace; font-size: 0.88em;
+  }
+  .search-wrap input:focus { border-color: #a855f7; outline: none; }
+
+  .prof-tabs { display: flex; flex-wrap: wrap; gap: 2px; margin-bottom: 12px; }
   .prof-tab {
     background: #1c1c30; border: 1px solid #2a2a40; color: #666; padding: 6px 14px;
     cursor: pointer; font-family: monospace; font-size: 0.8em; text-transform: uppercase;
@@ -51,8 +55,7 @@
   }
   .recipe-row:hover { border-color: #a855f7; }
   .recipe-row .r-name { color: #ddd; }
-  .recipe-row .r-cost { color: #888; font-size: 0.85em; white-space: nowrap; }
-  .recipe-row .r-sell { color: #888; font-size: 0.85em; white-space: nowrap; }
+  .recipe-row .r-col { color: #888; font-size: 0.85em; white-space: nowrap; }
   .recipe-row .r-profit { font-weight: bold; font-size: 0.85em; white-space: nowrap; }
   .recipe-row .r-profit.pos { color: #4ade80; }
   .recipe-row .r-profit.neg { color: #f87171; }
@@ -64,32 +67,69 @@
   }
   .recipe-detail.open { display: block; }
 
+  /* Reagent rows: qty | name | price inputs | stack btn */
   .reagent {
-    display: grid; grid-template-columns: 40px 1fr auto;
-    align-items: center; gap: 8px; padding: 4px 0;
+    display: grid; grid-template-columns: 40px 1fr auto auto;
+    align-items: center; gap: 6px; padding: 5px 0;
     border-bottom: 1px solid #1e1e32;
   }
   .reagent:last-child { border-bottom: none; }
-  .reagent .r-qty { color: #555; font-size: 0.85em; }
-  .reagent .r-rname { color: #bbb; font-size: 0.88em; }
-  .reagent .r-price { font-size: 0.85em; white-space: nowrap; }
-  .reagent .r-price.has-price { color: #888; }
-  .reagent .r-price.no-price { color: #f87171; font-style: italic; }
+  .r-qty { color: #555; font-size: 0.85em; }
+  .r-rname { color: #bbb; font-size: 0.88em; }
+  .r-price.no-price { color: #f87171; font-size: 0.8em; font-style: italic; }
 
-  .sub-reagents {
-    margin: 2px 0 6px 40px; border-left: 2px solid #2a2a40; padding-left: 10px;
+  /* g/s/c price inputs */
+  .price-group { display: inline-flex; align-items: center; gap: 2px; }
+  .price-group input {
+    background: #0e0e1c; border: 1px solid #333; color: #fff;
+    padding: 2px 3px; width: 36px; font-family: monospace; font-size: 0.82em;
+    text-align: right; -moz-appearance: textfield; appearance: textfield;
   }
-  .sub-label { font-size: 0.75em; color: #555; padding: 2px 0; display: flex; align-items: center; gap: 6px; }
-  .check { color: #4ade80; font-size: 0.8em; }
-
-  .detail-footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid #2a2a40; }
-  .detail-footer .footer-row { display: flex; gap: 10px; font-size: 0.85em; padding: 2px 0; }
-  .detail-footer .fl { color: #555; min-width: 80px; }
-  .detail-footer .fv { font-weight: bold; }
-
+  .price-group input::-webkit-outer-spin-button,
+  .price-group input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .price-group input:focus { border-color: #a855f7; outline: none; }
+  .cur { font-size: 0.78em; }
   .cur-g { color: #fbbf24; }
   .cur-s { color: #94a3b8; }
   .cur-c { color: #92400e; }
+
+  /* Stack popover */
+  .stack-wrap { position: relative; display: inline-flex; align-items: center; }
+  .stack-btn {
+    background: none; border: 1px solid #2a2a40; color: #444;
+    width: 20px; height: 20px; cursor: pointer; font-size: 0.7em; border-radius: 2px;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .stack-btn:hover, .stack-btn.open { border-color: #a855f7; color: #a855f7; }
+  .stack-panel {
+    display: none; position: absolute; top: calc(100% + 4px); right: 0; z-index: 50;
+    background: #1c1c30; border: 1px solid #a855f7; padding: 10px;
+    white-space: nowrap; min-width: 210px; box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  }
+  .stack-panel.open { display: block; }
+  .stack-panel-label { font-size: 0.75em; color: #666; margin-bottom: 6px; }
+  .stack-panel-row { display: flex; align-items: center; gap: 5px; }
+  .stack-qty {
+    width: 48px; background: #0e0e1c; border: 1px solid #333; color: #fff;
+    padding: 3px 5px; font-family: monospace; font-size: 0.85em; text-align: right;
+    -moz-appearance: textfield; appearance: textfield;
+  }
+  .stack-qty::-webkit-outer-spin-button,
+  .stack-qty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .stack-qty:focus { border-color: #a855f7; outline: none; }
+  .stack-at { color: #444; font-size: 0.85em; }
+
+  .sub-reagents { margin: 2px 0 6px 40px; border-left: 2px solid #2a2a40; padding-left: 10px; }
+  .sub-label { font-size: 0.75em; color: #555; padding: 2px 0; display: flex; align-items: center; gap: 5px; }
+  .check { color: #4ade80; }
+
+  .detail-footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid #2a2a40; }
+  .detail-footer .footer-row { display: flex; gap: 10px; font-size: 0.85em; padding: 2px 0; align-items: center; }
+  .detail-footer .fl { color: #555; min-width: 80px; }
+  .detail-footer .fv { font-weight: bold; }
+
+  .vendor-tag { font-size: 0.65em; color: #065f46; background: #064e3b; padding: 1px 4px; border-radius: 2px; margin-left: 4px; vertical-align: middle; }
 
   .empty-msg { color: #555; font-size: 0.85em; padding: 20px 0; max-width: 700px; }
 </style>
@@ -113,14 +153,17 @@
   <span class="ts" id="price-ts"></span>
 </div>
 
+<div class="search-wrap"><input type="text" id="search-box" placeholder="Search recipes..."></div>
 <div class="prof-tabs" id="prof-tabs"></div>
 <div id="recipe-container"></div>
 
 <script>
 let RECIPES = {}, ITEMS = {}, PRICES = {};
+let MANUAL_PRICES = {}; // itemId -> copper value (overrides AH price)
 let currentFaction = '', currentProf = '';
 let recipeByResult = {};
-let recipesLoaded = false;
+
+// ── Init ─────────────────────────────────────────────────────────────────────
 
 async function init() {
   const res = await fetch('recipes.json');
@@ -128,13 +171,9 @@ async function init() {
   const data = await res.json();
   RECIPES = data.professions;
   ITEMS = data.items;
-
-  for (const prof of Object.values(RECIPES)) {
-    for (const r of prof.recipes) {
+  for (const prof of Object.values(RECIPES))
+    for (const r of prof.recipes)
       if (r.resultId) recipeByResult[r.resultId] = r;
-    }
-  }
-  recipesLoaded = true;
 
   buildProfTabs();
 
@@ -148,27 +187,20 @@ async function init() {
   }
 }
 
-// --- Drag & drop / file upload ---
+// ── Drop zone ────────────────────────────────────────────────────────────────
 
 function setupDropZone() {
   const zone = document.getElementById('drop-zone');
   const input = document.getElementById('file-input');
-
   zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
   zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault();
-    zone.classList.remove('drag-over');
-    if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-  });
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
   input.addEventListener('change', () => { if (input.files.length) handleFile(input.files[0]); });
 }
 
 function handleFile(file) {
   const status = document.getElementById('drop-status');
-  status.textContent = 'Parsing...';
-  status.className = 'drop-status';
-
+  status.textContent = 'Parsing...'; status.className = 'drop-status';
   const reader = new FileReader();
   reader.onload = () => {
     try {
@@ -177,25 +209,20 @@ function handleFile(file) {
       localStorage.setItem('twow-aux-prices', JSON.stringify({ prices: PRICES, timestamp: ts }));
       onPricesLoaded(ts);
       const nonEmpty = Object.values(PRICES).filter(f => Object.keys(f).length > 0);
-      const totalItems = nonEmpty.reduce((sum, f) => sum + Object.keys(f).length, 0);
-      status.textContent = `Loaded ${totalItems} items from ${nonEmpty.length} faction(s)`;
+      const total = nonEmpty.reduce((s, f) => s + Object.keys(f).length, 0);
+      status.textContent = `Loaded ${total} items from ${nonEmpty.length} faction(s)`;
       status.className = 'drop-status ok';
-    } catch (e) {
-      console.error(e);
-      status.textContent = 'Error parsing file: ' + e.message;
-      status.className = 'drop-status err';
-    }
+    } catch (e) { console.error(e); status.textContent = 'Error: ' + e.message; status.className = 'drop-status err'; }
   };
   reader.readAsText(file);
 }
 
-// --- Lua parser (aux-addon.lua -> prices by faction) ---
+// ── Lua parser ───────────────────────────────────────────────────────────────
 
 function parseAuxLua(text) {
   const result = {};
   const factionIdx = text.indexOf('["faction"]');
   if (factionIdx === -1) throw new Error('No faction data found');
-
   const realmIdx = text.indexOf('["realm"]', factionIdx);
   const factionBlock = text.substring(factionIdx, realmIdx > 0 ? realmIdx : undefined);
 
@@ -205,31 +232,23 @@ function parseAuxLua(text) {
     const key = fm[1] + '|' + fm[2];
     const historyStart = factionBlock.indexOf('["history"]', fm.index);
     if (historyStart === -1) continue;
-
     const braceStart = factionBlock.indexOf('{', historyStart + 11);
     if (braceStart === -1) continue;
-
     let depth = 1, end = braceStart + 1;
     for (; end < factionBlock.length && depth > 0; end++) {
       if (factionBlock[end] === '{') depth++;
       else if (factionBlock[end] === '}') depth--;
     }
     const histBlock = factionBlock.substring(braceStart + 1, end - 1);
-
     const prices = {};
     const entryRe = /\["(\d+):(\d+)"\]\s*=\s*"([^"]*)"/g;
     let em;
     while ((em = entryRe.exec(histBlock)) !== null) {
-      const itemId = parseInt(em[1]);
-      const suffixId = parseInt(em[2]);
-      if (suffixId !== 0) continue;
-
+      if (parseInt(em[2]) !== 0) continue;
       const parts = em[3].split('#');
       if (parts.length < 2) continue;
-
       let minBuyout = parts[1] ? Math.round(parseFloat(parts[1])) : null;
       if (minBuyout === 0) minBuyout = null;
-
       let dataPoints = [];
       if (parts.length > 2 && parts[2]) {
         for (const dp of parts[2].split(';')) {
@@ -237,93 +256,107 @@ function parseAuxLua(text) {
           if (v && t) dataPoints.push({ value: Math.round(parseFloat(v)), time: parseInt(t) });
         }
       }
-
       let marketValue = minBuyout;
       if (dataPoints.length > 0) {
         let totalWeight = 0;
         const weighted = [];
         const refTime = dataPoints[0].time;
-        for (const dp of dataPoints) {
-          const w = Math.pow(0.99, Math.round((refTime - dp.time) / 86400));
-          totalWeight += w;
-          weighted.push({ value: dp.value, weight: w });
-        }
+        for (const dp of dataPoints) { const w = Math.pow(0.99, Math.round((refTime - dp.time) / 86400)); totalWeight += w; weighted.push({ value: dp.value, weight: w }); }
         if (totalWeight > 0) {
           for (const w of weighted) w.weight /= totalWeight;
           weighted.sort((a, b) => a.value - b.value);
           let cum = 0;
-          for (const w of weighted) {
-            cum += w.weight;
-            if (cum >= 0.5) { if (!marketValue) marketValue = w.value; break; }
-          }
+          for (const w of weighted) { cum += w.weight; if (cum >= 0.5) { if (!marketValue) marketValue = w.value; break; } }
         }
       }
-
-      if (marketValue) prices[itemId] = { minBuyout, marketValue };
+      if (marketValue) prices[parseInt(em[1])] = { minBuyout, marketValue };
     }
     result[key] = prices;
   }
   return result;
 }
 
-// --- UI rendering ---
+// ── Vendor prices (copper) ────────────────────────────────────────────────────
 
-function onPricesLoaded(timestamp) {
-  const controls = document.getElementById('controls');
-  controls.style.display = 'flex';
+const VENDOR_PRICES = {
+  // Threads
+  2320: 10,       // Coarse Thread
+  2321: 100,      // Fine Thread
+  4291: 500,      // Silken Thread
+  8343: 2000,     // Heavy Silken Thread
+  14341: 5000,    // Rune Thread
+  // Dyes
+  2324: 25,       // Bleach
+  2604: 50,       // Red Dye
+  2605: 100,      // Green Dye
+  4340: 50,       // Gray Dye
+  4341: 50,       // Yellow Dye
+  6260: 50,       // Blue Dye
+  6261: 100,      // Orange Dye
+  10290: 250,     // Pink Dye
+  // Vials
+  3371: 20,       // Empty Vial
+  3372: 200,      // Leaded Vial
+  8925: 500,      // Crystal Vial
+  18256: 6000,    // Imbued Vial
+  // Flux & smelting
+  2880: 100,      // Weak Flux
+  3466: 2000,     // Strong Flux
+  3857: 500,      // Coal
+  // Engineering / Enchanting
+  4399: 200,      // Wooden Stock
+  4470: 40,       // Simple Wood
+  6217: 126,      // Copper Rod
+  // Cooking / Fishing
+  2678: 10,       // Mild Spices
+  2692: 40,       // Hot Spices
+  3713: 80,       // Soothing Spices
+  6530: 50,       // Nightcrawlers
+  159: 25,        // Refreshing Spring Water
+  1179: 125,      // Ice Cold Milk
+  17194: 100,     // Holiday Spices
+  17196: 200,     // Holiday Spirits
+};
 
-  const factionSel = document.getElementById('faction-select');
-  factionSel.innerHTML = '';
-  const factions = Object.keys(PRICES).filter(k => Object.keys(PRICES[k]).length > 0);
-  factions.forEach(f => {
-    const opt = document.createElement('option');
-    opt.value = f; opt.textContent = f;
-    factionSel.appendChild(opt);
-  });
+// ── Pricing ──────────────────────────────────────────────────────────────────
 
-  if (factions.length && !factions.includes(currentFaction)) {
-    currentFaction = factions[0];
-  }
-  factionSel.value = currentFaction;
-  factionSel.onchange = () => { currentFaction = factionSel.value; renderProf(); };
-
-  if (timestamp) {
-    const d = new Date(timestamp);
-    document.getElementById('price-ts').textContent = 'Updated: ' + d.toLocaleString();
-  }
-
-  renderProf();
-}
-
-function buildProfTabs() {
-  const tabsEl = document.getElementById('prof-tabs');
-  tabsEl.innerHTML = '';
-  const profKeys = Object.keys(RECIPES);
-  profKeys.forEach(key => {
-    const tab = document.createElement('div');
-    tab.className = 'prof-tab';
-    tab.dataset.prof = key;
-    tab.textContent = RECIPES[key].name;
-    tab.onclick = () => {
-      currentProf = key;
-      tabsEl.querySelectorAll('.prof-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      renderProf();
-    };
-    tabsEl.appendChild(tab);
-  });
-  if (profKeys.length) {
-    currentProf = profKeys[0];
-    tabsEl.firstChild.classList.add('active');
-  }
-}
-
-function getPrice(itemId) {
+function getAHPrice(itemId) {
   const fp = PRICES[currentFaction];
   if (!fp) return null;
-  const p = fp[String(itemId)] || fp[itemId];
+  const p = fp[itemId] || fp[String(itemId)];
   return p ? (p.marketValue ?? p.minBuyout) : null;
 }
+
+function getEffectivePrice(itemId) {
+  const id = Number(itemId);
+  if (MANUAL_PRICES[id] !== undefined) return MANUAL_PRICES[id] || null;
+  const ah = getAHPrice(id);
+  if (ah !== null) return ah;
+  return VENDOR_PRICES[id] ?? null;
+}
+
+function calcCraftCost(recipe, visited = new Set()) {
+  if (visited.has(recipe.spellId)) return null;
+  visited.add(recipe.spellId);
+  let total = 0;
+  for (const r of recipe.reagents) {
+    const sub = recipeByResult[r.itemId];
+    const buy = getEffectivePrice(r.itemId);
+    if (sub && !visited.has(sub.spellId)) {
+      const craft = calcCraftCost(sub, new Set(visited));
+      if (buy !== null && craft !== null) total += Math.min(buy, craft) * r.qty;
+      else if (buy !== null) total += buy * r.qty;
+      else if (craft !== null) total += craft * r.qty;
+      else return null;
+    } else {
+      if (buy !== null) total += buy * r.qty;
+      else return null;
+    }
+  }
+  return total;
+}
+
+// ── Format ───────────────────────────────────────────────────────────────────
 
 function formatCopper(val) {
   if (val === null || val === undefined) return '<span class="cur-s">—</span>';
@@ -334,91 +367,136 @@ function formatCopper(val) {
   str += `<span class="cur-s">${s}s</span> <span class="cur-c">${c}c</span>`;
   return str;
 }
-
 function formatCopperCompact(val) {
   if (val === null || val === undefined) return '—';
   const neg = val < 0; val = Math.abs(Math.round(val));
   const g = Math.floor(val / 10000), s = Math.floor((val % 10000) / 100), c = val % 100;
-  let str = neg ? '-' : '';
-  if (g > 0) str += g + 'g ';
-  str += s + 's ' + c + 'c';
-  return str;
+  return (neg ? '-' : '') + (g > 0 ? g + 'g ' : '') + s + 's ' + c + 'c';
 }
 
-function calcCraftCost(recipe, visited = new Set()) {
-  if (visited.has(recipe.spellId)) return null;
-  visited.add(recipe.spellId);
+function copperToInputs(copper, grp) {
+  if (copper === null || copper === undefined) return;
+  grp.querySelector('.pg').value = Math.floor(copper / 10000) || '';
+  grp.querySelector('.ps').value = Math.floor((copper % 10000) / 100) || '';
+  grp.querySelector('.pc').value = copper % 100 || '';
+}
 
-  let total = 0;
-  for (const r of recipe.reagents) {
-    const subRecipe = recipeByResult[r.itemId];
-    const buyPrice = getPrice(r.itemId);
+function readCopper(grp) {
+  const pg = grp.querySelector('.pg'), ps = grp.querySelector('.ps'), pc = grp.querySelector('.pc');
+  if (!pg.value && !ps.value && !pc.value) return undefined;
+  return (parseInt(pg.value) || 0) * 10000 + (parseInt(ps.value) || 0) * 100 + (parseInt(pc.value) || 0);
+}
 
-    if (subRecipe && !visited.has(subRecipe.spellId)) {
-      const craftPrice = calcCraftCost(subRecipe, new Set(visited));
-      if (buyPrice !== null && craftPrice !== null) {
-        total += Math.min(buyPrice, craftPrice) * r.qty;
-      } else if (buyPrice !== null) {
-        total += buyPrice * r.qty;
-      } else if (craftPrice !== null) {
-        total += craftPrice * r.qty;
-      } else {
-        return null;
-      }
-    } else {
-      if (buyPrice !== null) {
-        total += buyPrice * r.qty;
-      } else {
-        return null;
-      }
-    }
-  }
-  return total;
+function priceGroupHTML(dataItem) {
+  const attr = dataItem ? ` data-item="${dataItem}"` : '';
+  return `<span class="price-group"${attr}>`
+    + `<input type="number" class="pg" min="0" placeholder="0"><span class="cur cur-g">g</span>`
+    + `<input type="number" class="ps" min="0" max="99" placeholder="0"><span class="cur cur-s">s</span>`
+    + `<input type="number" class="pc" min="0" max="99" placeholder="0"><span class="cur cur-c">c</span>`
+    + `</span>`;
+}
+
+// ── UI ────────────────────────────────────────────────────────────────────────
+
+function onPricesLoaded(timestamp) {
+  const controls = document.getElementById('controls');
+  controls.style.display = 'flex';
+  const factionSel = document.getElementById('faction-select');
+  factionSel.innerHTML = '';
+  const factions = Object.keys(PRICES).filter(k => Object.keys(PRICES[k]).length > 0);
+  factions.forEach(f => { const o = document.createElement('option'); o.value = f; o.textContent = f; factionSel.appendChild(o); });
+  if (factions.length && !factions.includes(currentFaction)) currentFaction = factions[0];
+  factionSel.value = currentFaction;
+  factionSel.onchange = () => { currentFaction = factionSel.value; renderProf(); };
+  if (timestamp) document.getElementById('price-ts').textContent = 'Updated: ' + new Date(timestamp).toLocaleString();
+  renderProf();
+}
+
+function buildProfTabs() {
+  const tabsEl = document.getElementById('prof-tabs');
+  tabsEl.innerHTML = '';
+  Object.keys(RECIPES).forEach(key => {
+    const tab = document.createElement('div');
+    tab.className = 'prof-tab'; tab.dataset.prof = key;
+    tab.textContent = RECIPES[key].name;
+    tab.onclick = () => {
+      currentProf = key;
+      tabsEl.querySelectorAll('.prof-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      renderProf();
+    };
+    tabsEl.appendChild(tab);
+  });
+  const keys = Object.keys(RECIPES);
+  if (keys.length) { currentProf = keys[0]; tabsEl.firstChild.classList.add('active'); }
+}
+
+function updateAllSummaryRows() {
+  document.querySelectorAll('.recipe-row[data-spell-id]').forEach(row => {
+    const recipe = recipeByResult[parseInt(row.dataset.resultId)] || row._recipe;
+    if (!recipe) return;
+    const craftCost = calcCraftCost(recipe);
+    const sellPrice = recipe.resultId ? getEffectivePrice(recipe.resultId) : null;
+    const profit = (craftCost !== null && sellPrice !== null) ? sellPrice - craftCost : null;
+    row.querySelector('.r-cost').innerHTML = formatCopper(craftCost);
+    row.querySelector('.r-sell').innerHTML = formatCopper(sellPrice);
+    const profEl = row.querySelector('.r-profit');
+    profEl.innerHTML = profit !== null ? formatCopperCompact(profit) : '—';
+    profEl.className = 'r-profit ' + (profit !== null ? (profit >= 0 ? 'pos' : 'neg') : 'unknown');
+  });
+}
+
+let updateTimer = null;
+function scheduleUpdate() {
+  clearTimeout(updateTimer);
+  updateTimer = setTimeout(updateAllSummaryRows, 150);
 }
 
 function renderProf() {
   const container = document.getElementById('recipe-container');
   container.innerHTML = '';
-
   if (!Object.keys(PRICES).length) {
     container.innerHTML = '<div class="empty-msg">Drop your aux-addon.lua above to load AH prices</div>';
     return;
   }
-
   const prof = RECIPES[currentProf];
   if (!prof) return;
 
   const list = document.createElement('div');
   list.className = 'recipe-list';
+  const q = document.getElementById('search-box').value.toLowerCase();
 
   const enriched = prof.recipes.map(recipe => {
     const craftCost = calcCraftCost(recipe);
-    const sellPrice = recipe.resultId ? getPrice(recipe.resultId) : null;
+    const sellPrice = recipe.resultId ? getEffectivePrice(recipe.resultId) : null;
     const profit = (craftCost !== null && sellPrice !== null) ? sellPrice - craftCost : null;
     return { recipe, craftCost, sellPrice, profit };
-  });
-
-  enriched.sort((a, b) => {
+  }).sort((a, b) => {
     if (a.profit !== null && b.profit !== null) return b.profit - a.profit;
-    if (a.profit !== null) return -1;
-    if (b.profit !== null) return 1;
-    return 0;
+    if (a.profit !== null) return -1; if (b.profit !== null) return 1; return 0;
   });
 
   enriched.forEach(({ recipe, craftCost, sellPrice, profit }) => {
+    const visible = !q || recipe.name.toLowerCase().includes(q);
+
     const row = document.createElement('div');
     row.className = 'recipe-row';
+    row.dataset.spellId = recipe.spellId;
+    row.dataset.resultId = recipe.resultId || '';
+    row._recipe = recipe;
+    row.style.display = visible ? '' : 'none';
     row.innerHTML = `<span class="r-name">${recipe.name}</span>`
-      + `<span class="r-cost">${formatCopper(craftCost)}</span>`
-      + `<span class="r-sell">${formatCopper(sellPrice)}</span>`
+      + `<span class="r-col r-cost">${formatCopper(craftCost)}</span>`
+      + `<span class="r-col r-sell">${formatCopper(sellPrice)}</span>`
       + `<span class="r-profit ${profit !== null ? (profit >= 0 ? 'pos' : 'neg') : 'unknown'}">${profit !== null ? formatCopperCompact(profit) : '—'}</span>`;
 
     const detail = document.createElement('div');
     detail.className = 'recipe-detail';
-
+    detail.style.display = visible ? '' : 'none';
     let detailBuilt = false;
+
     row.onclick = () => {
-      if (!detailBuilt) { detail.innerHTML = buildDetail(recipe); detailBuilt = true; }
+      if (!detailBuilt) { buildDetail(detail, recipe); detailBuilt = true; }
       row.classList.toggle('open');
       detail.classList.toggle('open');
     };
@@ -430,63 +508,177 @@ function renderProf() {
   container.appendChild(list);
 }
 
-function buildDetail(recipe) {
+function buildDetail(container, recipe) {
   let html = '';
 
   recipe.reagents.forEach(r => {
     const name = ITEMS[String(r.itemId)]?.name || `Item #${r.itemId}`;
-    const price = getPrice(r.itemId);
-    const subRecipe = recipeByResult[r.itemId];
+    const sub = recipeByResult[r.itemId];
+    const isVendor = VENDOR_PRICES[r.itemId] !== undefined;
 
-    html += `<div class="reagent">`;
+    html += `<div class="reagent" data-item-id="${r.itemId}">`;
     html += `<span class="r-qty">${r.qty}x</span>`;
-    html += `<span class="r-rname">${name}</span>`;
-    html += price !== null
-      ? `<span class="r-price has-price">${formatCopper(price)} ea</span>`
-      : `<span class="r-price no-price">no data</span>`;
+    html += `<span class="r-rname">${name}${isVendor ? '<span class="vendor-tag">vendor</span>' : ''}</span>`;
+    html += priceGroupHTML(r.itemId);
+    html += `<span class="stack-wrap"><button type="button" class="stack-btn" title="Stack calc">÷</button>`
+          + `<div class="stack-panel"><div class="stack-panel-label">Stack calculator</div>`
+          + `<div class="stack-panel-row"><input type="number" class="stack-qty" min="1" placeholder="qty">`
+          + `<span class="stack-at">@</span>${priceGroupHTML()}</div></div></span>`;
     html += `</div>`;
 
-    if (subRecipe) {
-      const buyCost = price !== null ? price * r.qty : null;
-      const craftCost = calcCraftCost(subRecipe);
-      const totalCraft = craftCost !== null ? craftCost * r.qty : null;
-      const cheaper = (buyCost !== null && totalCraft !== null)
-        ? (buyCost <= totalCraft ? 'buy' : 'craft')
-        : (buyCost !== null ? 'buy' : (totalCraft !== null ? 'craft' : null));
-
-      html += `<div class="sub-reagents">`;
-      html += `<div class="sub-label">${cheaper === 'craft' ? '<span class="check">✓</span>' : ''} craft from:</div>`;
-      subRecipe.reagents.forEach(sr => {
+    if (sub) {
+      html += `<div class="sub-reagents" data-parent="${r.itemId}">`;
+      html += `<div class="sub-label"><span class="check sub-check"></span> craft from:</div>`;
+      sub.reagents.forEach(sr => {
         const sname = ITEMS[String(sr.itemId)]?.name || `Item #${sr.itemId}`;
-        const sprice = getPrice(sr.itemId);
-        html += `<div class="reagent">`;
+        const srVendor = VENDOR_PRICES[sr.itemId] !== undefined;
+        html += `<div class="reagent" data-item-id="${sr.itemId}" data-sub-of="${r.itemId}" data-base-qty="${sr.qty}" data-parent-qty="${r.qty}">`;
         html += `<span class="r-qty">${sr.qty * r.qty}x</span>`;
-        html += `<span class="r-rname">${sname}</span>`;
-        html += sprice !== null
-          ? `<span class="r-price has-price">${formatCopper(sprice)} ea</span>`
-          : `<span class="r-price no-price">no data</span>`;
+        html += `<span class="r-rname">${sname}${srVendor ? '<span class="vendor-tag">vendor</span>' : ''}</span>`;
+        html += priceGroupHTML(sr.itemId);
+        html += `<span class="stack-wrap"><button type="button" class="stack-btn" title="Stack calc">÷</button>`
+              + `<div class="stack-panel"><div class="stack-panel-label">Stack calculator</div>`
+              + `<div class="stack-panel-row"><input type="number" class="stack-qty" min="1" placeholder="qty">`
+              + `<span class="stack-at">@</span>${priceGroupHTML()}</div></div></span>`;
         html += `</div>`;
       });
-      if (cheaper === 'buy') {
-        html += `<div class="sub-label" style="color:#4ade80;"><span class="check">✓</span> buying is cheaper (${formatCopperCompact(buyCost)} vs ${formatCopperCompact(totalCraft)})</div>`;
-      } else if (cheaper === 'craft' && buyCost !== null) {
-        html += `<div class="sub-label">crafting saves ${formatCopperCompact(buyCost - totalCraft)}</div>`;
-      }
+      html += `<div class="sub-label buy-cheaper-label" style="display:none;color:#4ade80;"><span class="check">✓</span> buying is cheaper</div>`;
       html += `</div>`;
     }
   });
 
-  const craftCost = calcCraftCost(recipe);
-  const sellPrice = recipe.resultId ? getPrice(recipe.resultId) : null;
-  const profit = (craftCost !== null && sellPrice !== null) ? sellPrice - craftCost : null;
-
+  // Sell price row in footer
   html += `<div class="detail-footer">`;
-  html += `<div class="footer-row"><span class="fl">Craft cost</span><span class="fv">${formatCopper(craftCost)}</span></div>`;
-  html += `<div class="footer-row"><span class="fl">Sell price</span><span class="fv">${formatCopper(sellPrice)}</span></div>`;
-  html += `<div class="footer-row"><span class="fl">Profit</span><span class="fv ${profit !== null ? (profit >= 0 ? 'pos' : 'neg') : ''}">${formatCopper(profit)}</span></div>`;
+  html += `<div class="footer-row"><span class="fl">Craft cost</span><span class="fv craft-cost-val">—</span></div>`;
+  html += `<div class="footer-row"><span class="fl">Sell price</span>`
+        + priceGroupHTML('sell')
+        + `<span class="stack-wrap"><button type="button" class="stack-btn" title="Stack calc">÷</button>`
+        + `<div class="stack-panel"><div class="stack-panel-label">Stack calculator</div>`
+        + `<div class="stack-panel-row"><input type="number" class="stack-qty" min="1" placeholder="qty">`
+        + `<span class="stack-at">@</span>${priceGroupHTML()}</div></div></span>`
+        + `</div>`;
+  html += `<div class="footer-row"><span class="fl">Profit</span><span class="fv profit-val">—</span></div>`;
   html += `</div>`;
-  return html;
+
+  container.innerHTML = html;
+
+  // Pre-fill all price inputs from effective prices
+  container.querySelectorAll('.price-group[data-item]').forEach(grp => {
+    const id = parseInt(grp.dataset.item);
+    if (id === 0 || isNaN(id)) return; // skip sell & stack groups
+    const price = getEffectivePrice(id);
+    if (price !== null) copperToInputs(price, grp);
+  });
+  // Pre-fill sell price
+  const sellGrp = container.querySelector('.price-group[data-item="sell"]');
+  const sellAH = recipe.resultId ? getEffectivePrice(recipe.resultId) : null;
+  if (sellAH !== null && sellGrp) copperToInputs(sellAH, sellGrp);
+
+  // Stack button popovers
+  container.querySelectorAll('.stack-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const panel = btn.nextElementSibling;
+      const isOpen = panel.classList.contains('open');
+      container.querySelectorAll('.stack-panel.open').forEach(p => { p.classList.remove('open'); p.previousElementSibling.classList.remove('open'); });
+      if (!isOpen) { panel.classList.add('open'); btn.classList.add('open'); }
+    });
+  });
+
+  // Stack calculators: qty @ totalPrice -> fills per-item price group
+  container.querySelectorAll('.stack-panel').forEach(panel => {
+    const wrap = panel.parentElement;
+    const priceGrp = wrap.previousElementSibling; // the .price-group before .stack-wrap
+    if (!priceGrp?.classList.contains('price-group')) return;
+    const stackQty = panel.querySelector('.stack-qty');
+    const stackPriceGrp = panel.querySelector('.price-group');
+
+    const calc = () => {
+      const qty = parseInt(stackQty.value) || 0;
+      const total = readCopper(stackPriceGrp);
+      if (qty > 0 && total !== undefined && total > 0) {
+        copperToInputs(Math.floor(total / qty), priceGrp);
+        priceGrp.dispatchEvent(new Event('pricechange', { bubbles: true }));
+      }
+    };
+    stackQty.addEventListener('input', calc);
+    stackPriceGrp.querySelectorAll('input').forEach(i => i.addEventListener('input', calc));
+  });
+
+  // Price input changes → update MANUAL_PRICES + recalc
+  const recalcDetail = () => {
+    // Read all reagent price inputs into MANUAL_PRICES
+    container.querySelectorAll('.price-group[data-item]').forEach(grp => {
+      const id = parseInt(grp.dataset.item);
+      if (!id || isNaN(id) || grp.dataset.item === 'sell') return;
+      const val = readCopper(grp);
+      if (val !== undefined) MANUAL_PRICES[id] = val;
+      else delete MANUAL_PRICES[id];
+    });
+
+    // Read sell price override
+    if (sellGrp) {
+      const sv = readCopper(sellGrp);
+      if (recipe.resultId && sv !== undefined) MANUAL_PRICES[recipe.resultId] = sv;
+      else if (recipe.resultId) delete MANUAL_PRICES[recipe.resultId];
+    }
+
+    const craftCost = calcCraftCost(recipe);
+    const sellCopper = recipe.resultId ? getEffectivePrice(recipe.resultId) : null;
+    const profit = (craftCost !== null && sellCopper !== null) ? sellCopper - craftCost : null;
+
+    container.querySelector('.craft-cost-val').innerHTML = formatCopper(craftCost);
+    const pv = container.querySelector('.profit-val');
+    pv.innerHTML = formatCopper(profit);
+    pv.className = 'fv profit-val ' + (profit !== null ? (profit >= 0 ? 'pos' : 'neg') : '');
+
+    // Update buy vs craft checkmarks for sub-components
+    container.querySelectorAll('.sub-reagents[data-parent]').forEach(subEl => {
+      const parentId = parseInt(subEl.dataset.parent);
+      const parentReagent = recipe.reagents.find(r => r.itemId === parentId);
+      if (!parentReagent) return;
+      const sub = recipeByResult[parentId];
+      if (!sub) return;
+      const buyPrice = getEffectivePrice(parentId);
+      const buyCost = buyPrice !== null ? buyPrice * parentReagent.qty : null;
+      const craftCostSub = calcCraftCost(sub);
+      const totalCraft = craftCostSub !== null ? craftCostSub * parentReagent.qty : null;
+      const cheaper = (buyCost !== null && totalCraft !== null) ? (buyCost <= totalCraft ? 'buy' : 'craft')
+        : (buyCost !== null ? 'buy' : (totalCraft !== null ? 'craft' : null));
+
+      const checkEl = subEl.querySelector('.sub-check');
+      const buyLabel = subEl.querySelector('.buy-cheaper-label');
+      checkEl.textContent = cheaper === 'craft' ? '✓' : '';
+      if (buyLabel) buyLabel.style.display = cheaper === 'buy' ? 'flex' : 'none';
+    });
+
+    scheduleUpdate();
+  };
+
+  container.querySelectorAll('.price-group[data-item] input').forEach(inp => inp.addEventListener('input', recalcDetail));
+  container.addEventListener('pricechange', recalcDetail);
+
+  // Close stacks on outside click
+  document.addEventListener('click', () => {
+    container.querySelectorAll('.stack-panel.open').forEach(p => { p.classList.remove('open'); p.previousElementSibling.classList.remove('open'); });
+  });
+
+  recalcDetail();
 }
+
+// ── Search ───────────────────────────────────────────────────────────────────
+
+document.getElementById('search-box').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.recipe-row').forEach(row => {
+    const match = !q || row.querySelector('.r-name').textContent.toLowerCase().includes(q);
+    row.style.display = match ? '' : 'none';
+    const detail = row.nextElementSibling;
+    if (detail?.classList.contains('recipe-detail')) detail.style.display = match ? '' : 'none';
+  });
+});
+
+// ── Bootstrap ────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   setupDropZone();
@@ -495,8 +687,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const hint = document.getElementById('path-hint');
   const copyMsg = document.getElementById('copy-msg');
   hint.addEventListener('click', () => {
-    const path = 'C:\\Games\\TurtleWoW\\WTF\\Account\\<ACCOUNT>\\SavedVariables\\aux-addon.lua';
-    navigator.clipboard.writeText(path).then(() => {
+    navigator.clipboard.writeText('C:\\Games\\TurtleWoW\\WTF\\Account\\<ACCOUNT>\\SavedVariables\\aux-addon.lua').then(() => {
       copyMsg.style.display = 'inline';
       setTimeout(() => { copyMsg.style.display = 'none'; }, 2000);
     });
