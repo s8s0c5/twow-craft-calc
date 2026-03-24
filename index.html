@@ -6,157 +6,381 @@
 <title>TWoW Craft Calc</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: monospace; background: #12121f; color: #ccc; padding: 20px; }
-  h1 { color: #a855f7; margin-bottom: 16px; font-size: 1.2em; letter-spacing: 0.05em; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0c0c16;
+    color: #d4d4dc;
+    padding: 36px 40px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  /* ── Drop zone ──────────────────────────────────── */
 
   .drop-zone {
-    border: 2px dashed #2a2a40; padding: 20px; text-align: center;
-    color: #555; font-size: 0.85em; margin-bottom: 16px; max-width: 700px;
-    transition: all 0.2s; cursor: pointer; position: relative;
+    border: 2px dashed #33334d;
+    border-radius: 8px;
+    padding: 28px 24px;
+    text-align: center;
+    color: #8888a0;
+    font-size: 1em;
+    margin-bottom: 24px;
+    max-width: 920px;
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
   }
-  .drop-zone:hover, .drop-zone.drag-over { border-color: #a855f7; color: #a855f7; }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: #a855f7;
+    color: #c084fc;
+    background: rgba(168, 85, 247, 0.04);
+  }
   .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  .drop-status { margin-top: 8px; font-size: 0.78em; }
+  .drop-status { margin-top: 12px; font-size: 0.9em; }
   .drop-status.ok { color: #4ade80; }
   .drop-status.err { color: #f87171; }
 
-  .controls { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  /* ── Controls bar ───────────────────────────────── */
+
+  .controls {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
   .controls select {
-    background: #1c1c30; border: 1px solid #2a2a40; color: #ccc;
-    padding: 6px 10px; font-family: monospace; font-size: 0.85em;
+    background: #16162a;
+    border: 1px solid #33334d;
+    border-radius: 4px;
+    color: #d4d4dc;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 0.95em;
   }
   .controls select:focus { border-color: #a855f7; outline: none; }
-  .controls label { color: #666; font-size: 0.8em; }
-  .controls .ts { color: #555; font-size: 0.75em; }
+  .controls label { color: #9999b0; font-size: 0.95em; }
+  .controls .ts { color: #6b6b88; font-size: 0.85em; }
 
-  .search-wrap { max-width: 700px; margin-bottom: 10px; }
+  /* ── Search ─────────────────────────────────────── */
+
+  .search-wrap { max-width: 920px; margin-bottom: 16px; }
   .search-wrap input {
-    width: 100%; background: #1c1c30; border: 1px solid #2a2a40; color: #ccc;
-    padding: 7px 12px; font-family: monospace; font-size: 0.88em;
+    width: 100%;
+    background: #16162a;
+    border: 1px solid #33334d;
+    border-radius: 6px;
+    color: #d4d4dc;
+    padding: 11px 16px;
+    font-family: inherit;
+    font-size: 1em;
   }
+  .search-wrap input::placeholder { color: #55556e; }
   .search-wrap input:focus { border-color: #a855f7; outline: none; }
 
-  .prof-tabs { display: flex; flex-wrap: wrap; gap: 2px; margin-bottom: 12px; }
-  .prof-tab {
-    background: #1c1c30; border: 1px solid #2a2a40; color: #666; padding: 6px 14px;
-    cursor: pointer; font-family: monospace; font-size: 0.8em; text-transform: uppercase;
-    letter-spacing: 0.05em; transition: all 0.15s;
-  }
-  .prof-tab:hover { color: #aaa; border-color: #444; }
-  .prof-tab.active { background: #2a2a40; color: #a855f7; border-color: #a855f7; }
+  /* ── Profession tabs ────────────────────────────── */
 
-  .recipe-list { display: flex; flex-direction: column; gap: 2px; max-width: 700px; }
+  .prof-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .prof-tab {
+    background: #16162a;
+    border: 1px solid #33334d;
+    border-radius: 4px;
+    color: #8888a0;
+    padding: 8px 20px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9em;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: all 0.15s;
+  }
+  .prof-tab:hover { color: #c0c0d0; border-color: #50506a; }
+  .prof-tab.active {
+    background: #1e1040;
+    color: #c084fc;
+    border-color: #a855f7;
+  }
+
+  /* ── Recipe list ────────────────────────────────── */
+
+  .recipe-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-width: 920px;
+  }
 
   .recipe-header {
-    display: grid; grid-template-columns: 1fr auto 50px auto;
-    gap: 12px; align-items: center; padding: 4px 14px;
-    font-size: 0.72em; color: #444; text-transform: uppercase; letter-spacing: 0.08em;
-    max-width: 700px;
+    display: grid;
+    grid-template-columns: 1fr 120px 100px;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 18px;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: #6b6b88;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    max-width: 920px;
   }
+
   .recipe-row {
-    display: grid; grid-template-columns: 1fr auto 50px auto;
-    gap: 12px; align-items: center; padding: 8px 14px;
-    background: #1c1c30; border: 1px solid #2a2a40; cursor: pointer;
-    font-size: 0.88em; transition: border-color 0.15s;
+    display: grid;
+    grid-template-columns: 1fr 120px 100px;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 18px;
+    background: #14142a;
+    border: 1px solid #22223a;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all 0.15s;
   }
-  .recipe-row:hover { border-color: #a855f7; }
-  .recipe-row .r-name { color: #ddd; }
-  .recipe-row .r-col { color: #888; font-size: 0.85em; white-space: nowrap; }
-  .recipe-row .r-profit { font-weight: bold; font-size: 0.85em; white-space: nowrap; }
+  .recipe-row:hover {
+    border-color: #7c3aed;
+    background: #181830;
+  }
+  .recipe-row .r-name { color: #e8e8f0; font-weight: 500; }
+  .recipe-row .r-col { color: #9999b0; font-size: 0.92em; white-space: nowrap; }
+  .recipe-row .r-profit { font-weight: 600; font-size: 0.92em; white-space: nowrap; }
   .recipe-row .r-profit.pos { color: #4ade80; }
   .recipe-row .r-profit.neg { color: #f87171; }
-  .recipe-row .r-profit.unknown { color: #555; }
+  .recipe-row .r-profit.unknown { color: #44445e; }
+
+  /* ── Recipe detail panel ────────────────────────── */
 
   .recipe-detail {
-    display: none; background: #161628; border: 1px solid #2a2a40;
-    border-top: none; padding: 12px 16px; max-width: 700px;
+    display: none;
+    background: #111124;
+    border: 1px solid #22223a;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    padding: 18px 22px;
+    max-width: 920px;
   }
   .recipe-detail.open { display: block; }
 
-  /* Reagent rows: qty | name | price inputs | stack btn */
+  /* ── Reagent rows ───────────────────────────────── */
+
   .reagent {
-    display: grid; grid-template-columns: 40px 1fr auto auto;
-    align-items: center; gap: 6px; padding: 5px 0;
-    border-bottom: 1px solid #1e1e32;
+    display: grid;
+    grid-template-columns: 48px 1fr auto auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid #1c1c34;
   }
   .reagent:last-child { border-bottom: none; }
-  .r-qty { color: #555; font-size: 0.85em; }
-  .r-rname { color: #bbb; font-size: 0.88em; }
-  .r-price.no-price { color: #f87171; font-size: 0.8em; font-style: italic; }
+  .r-qty { color: #c0c0d0; font-size: 0.95em; font-weight: 600; }
+  .r-rname { color: #c8c8d8; font-size: 1em; }
+  .r-total { color: #9999b0; font-size: 0.88em; white-space: nowrap; min-width: 80px; text-align: right; }
+  .r-price.no-price { color: #f87171; font-size: 0.95em; font-style: italic; }
 
-  /* g/s/c price inputs */
-  .price-group { display: inline-flex; align-items: center; gap: 2px; }
+  /* ── g/s/c price inputs ─────────────────────────── */
+
+  .price-group { display: inline-flex; align-items: center; gap: 3px; }
   .price-group input {
-    background: #0e0e1c; border: 1px solid #333; color: #fff;
-    padding: 2px 3px; width: 36px; font-family: monospace; font-size: 0.82em;
-    text-align: right; -moz-appearance: textfield; appearance: textfield;
+    background: #0a0a18;
+    border: 1px solid #33334d;
+    border-radius: 3px;
+    color: #e8e8f0;
+    padding: 5px 6px;
+    width: 44px;
+    font-family: 'Consolas', 'SF Mono', monospace;
+    font-size: 0.9em;
+    text-align: right;
+    -moz-appearance: textfield;
+    appearance: textfield;
   }
   .price-group input::-webkit-outer-spin-button,
   .price-group input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .price-group input:focus { border-color: #a855f7; outline: none; }
-  .cur { font-size: 0.78em; }
-  .cur-g { color: #fbbf24; }
-  .cur-s { color: #94a3b8; }
-  .cur-c { color: #92400e; }
+  .cur { font-size: 0.85em; font-weight: 600; }
+  .cur-g { color: #facc15; }
+  .cur-s { color: #a8b8cc; }
+  .cur-c { color: #d4945a; }
 
-  /* Stack popover */
+  /* ── Stack popover ──────────────────────────────── */
+
   .stack-wrap { position: relative; display: inline-flex; align-items: center; }
   .stack-btn {
-    background: none; border: 1px solid #2a2a40; color: #444;
-    width: 20px; height: 20px; cursor: pointer; font-size: 0.7em; border-radius: 2px;
-    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    background: none;
+    border: 1px solid #33334d;
+    border-radius: 4px;
+    color: #6b6b88;
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    font-size: 0.85em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
     flex-shrink: 0;
   }
-  .stack-btn:hover, .stack-btn.open { border-color: #a855f7; color: #a855f7; }
+  .stack-btn:hover, .stack-btn.open { border-color: #a855f7; color: #c084fc; }
   .stack-panel {
-    display: none; position: absolute; top: calc(100% + 4px); right: 0; z-index: 50;
-    background: #1c1c30; border: 1px solid #a855f7; padding: 10px;
-    white-space: nowrap; min-width: 210px; box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 50;
+    background: #16162a;
+    border: 1px solid #a855f7;
+    border-radius: 6px;
+    padding: 14px;
+    white-space: nowrap;
+    min-width: 240px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   }
   .stack-panel.open { display: block; }
-  .stack-panel-label { font-size: 0.75em; color: #666; margin-bottom: 6px; }
-  .stack-panel-row { display: flex; align-items: center; gap: 5px; }
+  .stack-panel-label { font-size: 0.85em; color: #8888a0; margin-bottom: 10px; font-weight: 500; }
+  .stack-panel-row { display: flex; align-items: center; gap: 8px; }
   .stack-qty {
-    width: 48px; background: #0e0e1c; border: 1px solid #333; color: #fff;
-    padding: 3px 5px; font-family: monospace; font-size: 0.85em; text-align: right;
-    -moz-appearance: textfield; appearance: textfield;
+    width: 54px;
+    background: #0a0a18;
+    border: 1px solid #33334d;
+    border-radius: 3px;
+    color: #e8e8f0;
+    padding: 5px 6px;
+    font-family: 'Consolas', 'SF Mono', monospace;
+    font-size: 0.9em;
+    text-align: right;
+    -moz-appearance: textfield;
+    appearance: textfield;
   }
   .stack-qty::-webkit-outer-spin-button,
   .stack-qty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .stack-qty:focus { border-color: #a855f7; outline: none; }
-  .stack-at { color: #444; font-size: 0.85em; }
+  .stack-at { color: #6b6b88; font-size: 0.9em; }
 
-  .sub-reagents { margin: 2px 0 6px 40px; border-left: 2px solid #2a2a40; padding-left: 10px; }
-  .sub-label { font-size: 0.75em; color: #555; padding: 2px 0; display: flex; align-items: center; gap: 5px; }
+  /* ── Sub-reagents ───────────────────────────────── */
+
+  .sub-reagents {
+    margin: 6px 0 10px 48px;
+    border-left: 2px solid #2a2a44;
+    padding-left: 14px;
+  }
+  .sub-label {
+    font-size: 0.88em;
+    color: #8888a0;
+    padding: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
   .check { color: #4ade80; }
 
-  .detail-footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid #2a2a40; }
-  .detail-footer .footer-row { display: flex; gap: 10px; font-size: 0.85em; padding: 2px 0; align-items: center; }
-  .detail-footer .fl { color: #555; min-width: 80px; }
-  .detail-footer .fv { font-weight: bold; }
+  /* ── Detail footer ──────────────────────────────── */
 
-  .vendor-tag { font-size: 0.65em; color: #065f46; background: #064e3b; padding: 1px 4px; border-radius: 2px; margin-left: 4px; vertical-align: middle; }
+  .detail-footer {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #2a2a44;
+  }
+  .detail-footer .footer-row {
+    display: flex;
+    gap: 14px;
+    font-size: 1em;
+    padding: 5px 0;
+    align-items: center;
+  }
+  .detail-footer .fl { color: #8888a0; min-width: 100px; font-weight: 500; }
+  .detail-footer .fv { font-weight: 600; }
 
-  /* Price wrap: groups price-group + reset btn inline */
-  .price-wrap { display: inline-flex; align-items: center; gap: 3px; }
+  /* ── Tags ───────────────────────────────────────── */
+
+  .vendor-tag {
+    font-size: 0.72em;
+    font-weight: 600;
+    color: #34d399;
+    background: #0a2e20;
+    border: 1px solid #166534;
+    padding: 1px 7px;
+    border-radius: 3px;
+    margin-left: 8px;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .cd-tag {
+    font-size: 0.72em;
+    font-weight: 600;
+    color: #f59e0b;
+    background: #2e1f0a;
+    border: 1px solid #92400e;
+    padding: 1px 7px;
+    border-radius: 3px;
+    margin-left: 8px;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .pct-tag {
+    font-size: 0.72em;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .pct-tag.pct-low { color: #4ade80; background: #0a2e20; border: 1px solid #166534; }
+  .pct-tag.pct-normal { color: #8888a0; background: #1c1c34; border: 1px solid #33334d; }
+  .pct-tag.pct-high { color: #fb923c; background: #2e1f0a; border: 1px solid #92400e; }
+  .pct-tag.pct-very-high { color: #f87171; background: #2e0a0a; border: 1px solid #991b1b; }
+
+  /* ── Price wrap + reset ─────────────────────────── */
+
+  .price-wrap { display: inline-flex; align-items: center; gap: 6px; }
   .reset-btn {
-    background: none; border: none; color: #333; font-size: 0.85em; cursor: pointer;
-    padding: 1px 2px; line-height: 1; transition: color 0.15s; flex-shrink: 0;
+    background: none;
+    border: none;
+    color: #50506a;
+    font-size: 1.05em;
+    cursor: pointer;
+    padding: 2px 4px;
+    line-height: 1;
+    transition: color 0.15s;
+    flex-shrink: 0;
   }
-  .reset-btn:hover { color: #a855f7; }
+  .reset-btn:hover { color: #c084fc; }
 
-  /* Method toggle: auto / buy / craft */
-  .method-btns { display: inline-flex; gap: 2px; margin-left: 6px; }
+  /* ── Method toggle: auto / buy / craft ──────────── */
+
+  .method-btns { display: inline-flex; gap: 3px; margin-left: 8px; }
   .mbtn {
-    background: none; border: 1px solid #2a2a40; color: #444; font-family: monospace;
-    font-size: 0.68em; padding: 1px 5px; cursor: pointer; transition: all 0.15s; text-transform: uppercase;
+    background: none;
+    border: 1px solid #33334d;
+    border-radius: 3px;
+    color: #6b6b88;
+    font-family: inherit;
+    font-size: 0.78em;
+    font-weight: 500;
+    padding: 3px 9px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
   }
-  .mbtn:hover { border-color: #555; color: #999; }
-  .mbtn.active { border-color: #a855f7; color: #a855f7; background: #1a0a2e; }
+  .mbtn:hover { border-color: #50506a; color: #b0b0c4; }
+  .mbtn.active {
+    border-color: #a855f7;
+    color: #c084fc;
+    background: #1e1040;
+  }
 
-  .r-vol { font-size: 0.75em; letter-spacing: 1px; }
 
-  .empty-msg { color: #555; font-size: 0.85em; padding: 20px 0; max-width: 700px; }
+  /* ── Empty state ────────────────────────────────── */
+
+  .empty-msg { color: #6b6b88; font-size: 1em; padding: 28px 0; max-width: 920px; }
 </style>
 </head>
 <body>
@@ -164,8 +388,8 @@
 <div class="drop-zone" id="drop-zone">
   Drop your <b>aux-addon.lua</b> here or click to browse
   <input type="file" id="file-input" accept=".lua">
-  <div style="margin-top:10px;font-size:0.75em;color:#444;">
-    Usually found at: <code id="path-hint" style="color:#666;cursor:pointer;background:#1c1c30;padding:2px 6px;border:1px solid #2a2a40;" title="Click to copy">C:\Games\TurtleWoW\WTF\Account\&lt;ACCOUNT&gt;\SavedVariables\aux-addon.lua</code>
+  <div style="margin-top:12px;font-size:0.85em;color:#6b6b88;">
+    Usually found at: <code id="path-hint" style="color:#9999b0;cursor:pointer;background:#16162a;padding:3px 8px;border:1px solid #33334d;border-radius:3px;" title="Click to copy">C:\Games\TurtleWoW\WTF\Account\&lt;ACCOUNT&gt;\SavedVariables\aux-addon.lua</code>
     <span id="copy-msg" style="color:#4ade80;margin-left:8px;display:none;">copied!</span>
   </div>
   <div class="drop-status" id="drop-status"></div>
@@ -201,6 +425,21 @@ async function init() {
       if (r.resultId) recipeByResult[r.resultId] = r;
 
   buildProfTabs();
+
+  try {
+    const auxRes = await fetch('aux-addon.lua');
+    if (auxRes.ok) {
+      const text = await auxRes.text();
+      PRICES = parseAuxLua(text);
+      onPricesLoaded(null);
+      const status = document.getElementById('drop-status');
+      const nonEmpty = Object.values(PRICES).filter(f => Object.keys(f).length > 0);
+      const total = nonEmpty.reduce((s, f) => s + Object.keys(f).length, 0);
+      status.textContent = `Loaded ${total} items from ${nonEmpty.length} faction(s) (bundled data)`;
+      status.className = 'drop-status ok';
+      return;
+    }
+  } catch (e) {}
 
   const saved = localStorage.getItem('twow-aux-prices');
   if (saved) {
@@ -294,7 +533,7 @@ function parseAuxLua(text) {
           for (const w of weighted) { cum += w.weight; if (cum >= 0.5) { if (!marketValue) marketValue = w.value; break; } }
         }
       }
-      if (marketValue) prices[parseInt(em[1])] = { minBuyout, marketValue, volume: dataPoints.length };
+      if (marketValue) prices[parseInt(em[1])] = { minBuyout, marketValue };
     }
     result[key] = prices;
   }
@@ -332,6 +571,8 @@ const VENDOR_PRICES = {
   4399: 200,      // Wooden Stock
   4470: 40,       // Simple Wood
   6217: 126,      // Copper Rod
+  // Leatherworking
+  4289: 25,       // Salt
   // Cooking / Fishing
   2678: 10,       // Mild Spices
   2692: 40,       // Hot Spices
@@ -365,16 +606,25 @@ function getEffectivePrice(itemId) {
   return ah ?? vendor;
 }
 
+function getMarketPct(itemId) {
+  const p = getAHData(Number(itemId));
+  if (!p || !p.minBuyout || !p.marketValue) return null;
+  return Math.round((p.minBuyout / p.marketValue) * 100);
+}
+
+function pctTagHTML(itemId) {
+  const pct = getMarketPct(itemId);
+  if (pct === null) return '';
+  const cls = pct <= 80 ? 'pct-low' : pct <= 115 ? 'pct-normal' : pct <= 150 ? 'pct-high' : 'pct-very-high';
+  return `<span class="pct-tag ${cls}">${pct}%</span>`;
+}
+
 function getSellPrice(itemId) {
   const raw = getEffectivePrice(itemId);
   if (raw === null) return null;
   return Math.floor(raw * 0.95);
 }
 
-function getVolume(itemId) {
-  const p = getAHData(Number(itemId));
-  return p ? (p.volume || 0) : 0;
-}
 
 function calcCraftCost(recipe, visited = new Set()) {
   if (visited.has(recipe.spellId)) return null;
@@ -386,13 +636,14 @@ function calcCraftCost(recipe, visited = new Set()) {
     const forced = FORCE_METHOD[r.itemId];
 
     if (sub && !visited.has(sub.spellId) && forced !== 'buy') {
-      const craft = calcCraftCost(sub, new Set(visited));
+      const craft = sub.cooldown ? null : calcCraftCost(sub, new Set(visited));
       if (forced === 'craft') {
-        if (craft !== null) total += craft * r.qty;
-        else if (buy !== null) total += buy * r.qty; // fallback if craft not computable
+        const craftForced = calcCraftCost(sub, new Set(visited));
+        if (craftForced !== null) total += craftForced * r.qty;
+        else if (buy !== null) total += buy * r.qty;
         else return null;
       } else {
-        // auto: pick cheapest
+        // auto: default to buy for cooldown recipes, otherwise pick cheapest
         if (buy !== null && craft !== null) total += Math.min(buy, craft) * r.qty;
         else if (buy !== null) total += buy * r.qty;
         else if (craft !== null) total += craft * r.qty;
@@ -424,13 +675,6 @@ function formatCopperCompact(val) {
   return (neg ? '-' : '') + (g > 0 ? g + 'g ' : '') + s + 's ' + c + 'c';
 }
 
-function volBar(n) {
-  if (n === 0) return '<span style="color:#333">—</span>';
-  const filled = Math.min(5, Math.ceil(n / 5));
-  const colors = ['#ef4444','#f97316','#eab308','#84cc16','#22c55e'];
-  const c = colors[filled - 1];
-  return `<span style="color:${c}">${'▮'.repeat(filled)}<span style="color:#222">${'▯'.repeat(5 - filled)}</span></span>`;
-}
 
 function copperToInputs(copper, grp) {
   if (copper === null || copper === undefined) return;
@@ -525,7 +769,7 @@ function renderProf() {
 
   const header = document.createElement('div');
   header.className = 'recipe-header';
-  header.innerHTML = `<span>Recipe</span><span>Cost</span><span>Volume</span><span>Profit</span>`;
+  header.innerHTML = `<span>Recipe</span><span>Cost</span><span>Profit</span>`;
   container.appendChild(header);
 
   const list = document.createElement('div');
@@ -535,15 +779,14 @@ function renderProf() {
   const enriched = prof.recipes.map(recipe => {
     const craftCost = calcCraftCost(recipe);
     const sellPrice = recipe.resultId ? getSellPrice(recipe.resultId) : null;
-    const vol = recipe.resultId ? getVolume(recipe.resultId) : 0;
     const profit = (craftCost !== null && sellPrice !== null) ? sellPrice - craftCost : null;
-    return { recipe, craftCost, sellPrice, profit, vol };
+    return { recipe, craftCost, sellPrice, profit };
   }).sort((a, b) => {
     if (a.profit !== null && b.profit !== null) return b.profit - a.profit;
     if (a.profit !== null) return -1; if (b.profit !== null) return 1; return 0;
   });
 
-  enriched.forEach(({ recipe, craftCost, sellPrice, profit, vol }) => {
+  enriched.forEach(({ recipe, craftCost, sellPrice, profit }) => {
     const visible = !q || recipe.name.toLowerCase().includes(q);
 
     const row = document.createElement('div');
@@ -552,9 +795,9 @@ function renderProf() {
     row.dataset.resultId = recipe.resultId || '';
     row._recipe = recipe;
     row.style.display = visible ? '' : 'none';
-    row.innerHTML = `<span class="r-name">${recipe.name}</span>`
+    const cdLabel = recipe.cooldown ? `<span class="cd-tag">${recipe.cooldown >= 48 ? (recipe.cooldown / 24) + 'd cd' : recipe.cooldown + 'h cd'}</span>` : '';
+    row.innerHTML = `<span class="r-name">${recipe.name}${cdLabel}</span>`
       + `<span class="r-col r-cost">${formatCopper(craftCost)}</span>`
-      + `<span class="r-col r-vol" title="${vol} data points">${volBar(vol)}</span>`
       + `<span class="r-profit ${profit !== null ? (profit >= 0 ? 'pos' : 'neg') : 'unknown'}">${profit !== null ? formatCopperCompact(profit) : '—'}</span>`;
 
     const detail = document.createElement('div');
@@ -583,10 +826,12 @@ function buildDetail(container, recipe) {
     const sub = recipeByResult[r.itemId];
     const isVendor = VENDOR_PRICES[r.itemId] !== undefined;
 
-    html += `<div class="reagent" data-item-id="${r.itemId}">`;
+    const cdTag = sub?.cooldown ? `<span class="cd-tag">${sub.cooldown >= 48 ? (sub.cooldown / 24) + 'd cd' : sub.cooldown + 'h cd'}</span>` : '';
+    html += `<div class="reagent" data-item-id="${r.itemId}" data-qty="${r.qty}">`;
     html += `<span class="r-qty">${r.qty}x</span>`;
-    html += `<span class="r-rname">${name}${isVendor ? '<span class="vendor-tag">vendor</span>' : ''}</span>`;
+    html += `<span class="r-rname">${name}${isVendor ? '<span class="vendor-tag">vendor</span>' : ''}${cdTag}${!isVendor ? pctTagHTML(r.itemId) : ''}</span>`;
     html += priceGroupHTML(r.itemId);
+    html += `<span class="r-total"></span>`;
     html += `<span class="stack-wrap"><button type="button" class="stack-btn" title="Stack calc">÷</button>`
           + `<div class="stack-panel"><div class="stack-panel-label">Stack calculator</div>`
           + `<div class="stack-panel-row"><input type="number" class="stack-qty" min="1" placeholder="qty">`
@@ -606,10 +851,11 @@ function buildDetail(container, recipe) {
       sub.reagents.forEach(sr => {
         const sname = ITEMS[String(sr.itemId)]?.name || `Item #${sr.itemId}`;
         const srVendor = VENDOR_PRICES[sr.itemId] !== undefined;
-        html += `<div class="reagent" data-item-id="${sr.itemId}" data-sub-of="${r.itemId}" data-base-qty="${sr.qty}" data-parent-qty="${r.qty}">`;
+        html += `<div class="reagent" data-item-id="${sr.itemId}" data-sub-of="${r.itemId}" data-base-qty="${sr.qty}" data-parent-qty="${r.qty}" data-qty="${sr.qty * r.qty}">`;
         html += `<span class="r-qty">${sr.qty * r.qty}x</span>`;
-        html += `<span class="r-rname">${sname}${srVendor ? '<span class="vendor-tag">vendor</span>' : ''}</span>`;
+        html += `<span class="r-rname">${sname}${srVendor ? '<span class="vendor-tag">vendor</span>' : ''}${!srVendor ? pctTagHTML(sr.itemId) : ''}</span>`;
         html += priceGroupHTML(sr.itemId);
+        html += `<span class="r-total"></span>`;
         html += `<span class="stack-wrap"><button type="button" class="stack-btn" title="Stack calc">÷</button>`
               + `<div class="stack-panel"><div class="stack-panel-label">Stack calculator</div>`
               + `<div class="stack-panel-row"><input type="number" class="stack-qty" min="1" placeholder="qty">`
@@ -624,7 +870,7 @@ function buildDetail(container, recipe) {
   // Sell price row in footer
   html += `<div class="detail-footer">`;
   html += `<div class="footer-row"><span class="fl">Craft cost</span><span class="fv craft-cost-val">—</span></div>`;
-  html += `<div class="footer-row"><span class="fl">Sell price <span style="color:#555;font-size:0.8em">(-5%)</span></span>`
+  html += `<div class="footer-row"><span class="fl">Sell price <span style="color:#6b6b88;font-size:0.82em">(-5%)</span></span>`
         + priceGroupHTML('sell')
         + `<span class="stack-wrap"><button type="button" class="stack-btn" title="Stack calc">÷</button>`
         + `<div class="stack-panel"><div class="stack-panel-label">Stack calculator</div>`
@@ -732,6 +978,16 @@ function buildDetail(container, recipe) {
       else if (recipe.resultId) delete MANUAL_PRICES[recipe.resultId];
     }
 
+    container.querySelectorAll('.reagent[data-qty]').forEach(row => {
+      const qty = parseInt(row.dataset.qty);
+      const grp = row.querySelector('.price-group[data-item]');
+      const totalEl = row.querySelector('.r-total');
+      if (!grp || !totalEl) return;
+      const unitPrice = readCopper(grp);
+      if (unitPrice !== undefined) totalEl.innerHTML = '= ' + formatCopper(unitPrice * qty);
+      else totalEl.innerHTML = '';
+    });
+
     const craftCost = calcCraftCost(recipe);
     const sellCopper = recipe.resultId ? getSellPrice(recipe.resultId) : null;
     const profit = (craftCost !== null && sellCopper !== null) ? sellCopper - craftCost : null;
@@ -750,7 +1006,7 @@ function buildDetail(container, recipe) {
       if (!sub) return;
       const buyPrice = getEffectivePrice(parentId);
       const buyCost = buyPrice !== null ? buyPrice * parentReagent.qty : null;
-      const craftCostSub = calcCraftCost(sub);
+      const craftCostSub = sub.cooldown ? null : calcCraftCost(sub);
       const totalCraft = craftCostSub !== null ? craftCostSub * parentReagent.qty : null;
       const forced = FORCE_METHOD[parentId];
       const auto = (buyCost !== null && totalCraft !== null) ? (buyCost <= totalCraft ? 'buy' : 'craft')
@@ -764,8 +1020,10 @@ function buildDetail(container, recipe) {
 
       const checkEl = subEl.querySelector('.sub-check');
       const buyLabel = subEl.querySelector('.buy-cheaper-label');
-      checkEl.textContent = active === 'craft' ? '✓' : '';
-      if (buyLabel) buyLabel.style.display = active === 'buy' ? 'flex' : 'none';
+      const isBuy = active === 'buy';
+      checkEl.textContent = !isBuy ? '✓' : '';
+      if (buyLabel) buyLabel.style.display = isBuy ? 'flex' : 'none';
+      subEl.querySelectorAll('.reagent').forEach(r => r.style.display = isBuy ? 'none' : '');
     });
 
     scheduleUpdate();

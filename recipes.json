@@ -6337,6 +6337,7 @@
         {
           "spellId": 11479,
           "name": "Transmute: Iron to Gold",
+          "cooldown": 48,
           "skillReq": 225,
           "resultId": 3577,
           "reagents": [
@@ -6349,6 +6350,7 @@
         {
           "spellId": 11480,
           "name": "Transmute: Mithril to Truesilver",
+          "cooldown": 48,
           "skillReq": 225,
           "resultId": 6037,
           "reagents": [
@@ -6397,6 +6399,7 @@
         {
           "spellId": 17187,
           "name": "Transmute: Arcanite",
+          "cooldown": 48,
           "skillReq": 275,
           "resultId": 12360,
           "reagents": [
@@ -6545,6 +6548,7 @@
         {
           "spellId": 17559,
           "name": "Transmute: Air to Fire",
+          "cooldown": 24,
           "skillReq": 275,
           "resultId": 7078,
           "reagents": [
@@ -6557,6 +6561,7 @@
         {
           "spellId": 17560,
           "name": "Transmute: Fire to Earth",
+          "cooldown": 24,
           "skillReq": 275,
           "resultId": 7076,
           "reagents": [
@@ -6569,6 +6574,7 @@
         {
           "spellId": 17561,
           "name": "Transmute: Earth to Water",
+          "cooldown": 24,
           "skillReq": 275,
           "resultId": 7080,
           "reagents": [
@@ -6581,6 +6587,7 @@
         {
           "spellId": 17562,
           "name": "Transmute: Water to Air",
+          "cooldown": 24,
           "skillReq": 275,
           "resultId": 7082,
           "reagents": [
@@ -6593,6 +6600,7 @@
         {
           "spellId": 17563,
           "name": "Transmute: Undeath to Water",
+          "cooldown": 24,
           "skillReq": 275,
           "resultId": 7080,
           "reagents": [
@@ -6605,6 +6613,7 @@
         {
           "spellId": 17564,
           "name": "Transmute: Water to Undeath",
+          "cooldown": 24,
           "skillReq": 275,
           "resultId": 12808,
           "reagents": [
@@ -6617,6 +6626,7 @@
         {
           "spellId": 17565,
           "name": "Transmute: Life to Earth",
+          "cooldown": 24,
           "skillReq": 275,
           "resultId": 7076,
           "reagents": [
@@ -6629,6 +6639,7 @@
         {
           "spellId": 17566,
           "name": "Transmute: Earth to Life",
+          "cooldown": 24,
           "skillReq": 275,
           "resultId": 12803,
           "reagents": [
@@ -7133,6 +7144,7 @@
         {
           "spellId": 25146,
           "name": "Transmute: Elemental Fire",
+          "cooldown": 24,
           "skillReq": 300,
           "resultId": 7068,
           "reagents": [
@@ -7649,6 +7661,7 @@
         {
           "spellId": 57555,
           "name": "Transmute: Elemental Earth",
+          "cooldown": 24,
           "skillReq": 300,
           "resultId": 7067,
           "reagents": [
@@ -7661,6 +7674,7 @@
         {
           "spellId": 57557,
           "name": "Transmute: Elemental Water",
+          "cooldown": 24,
           "skillReq": 300,
           "resultId": 7070,
           "reagents": [
@@ -21757,6 +21771,7 @@
         {
           "spellId": 19567,
           "name": "Salt Shaker",
+          "cooldown": 72,
           "skillReq": 250,
           "resultId": 15846,
           "reagents": [
@@ -26207,6 +26222,7 @@
         {
           "spellId": 19047,
           "name": "Cured Rugged Hide",
+          "cooldown": 72,
           "skillReq": 230,
           "resultId": 15407,
           "reagents": [
@@ -34574,6 +34590,7 @@
         {
           "spellId": 18560,
           "name": "Mooncloth",
+          "cooldown": 96,
           "skillReq": 250,
           "resultId": 14342,
           "reagents": [
