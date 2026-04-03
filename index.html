@@ -119,7 +119,7 @@
 
   .recipe-header {
     display: grid;
-    grid-template-columns: 1fr 120px 100px;
+    grid-template-columns: 1fr 60px 120px 100px;
     gap: 12px;
     align-items: center;
     padding: 8px 18px;
@@ -130,10 +130,13 @@
     letter-spacing: 0.1em;
     max-width: 920px;
   }
+  .recipe-header span { cursor: pointer; user-select: none; }
+  .recipe-header span:hover { color: #a0a0c0; }
+  .sort-arrow { font-size: 0.7em; margin-left: 4px; }
 
   .recipe-row {
     display: grid;
-    grid-template-columns: 1fr 120px 100px;
+    grid-template-columns: 1fr 60px 120px 100px;
     gap: 12px;
     align-items: center;
     padding: 12px 18px;
@@ -150,6 +153,7 @@
   }
   .recipe-row .r-name { color: #e8e8f0; font-weight: 500; }
   .recipe-row .r-col { color: #9999b0; font-size: 0.92em; white-space: nowrap; }
+  .recipe-row .r-skill { text-align: center; }
   .recipe-row .r-profit { font-weight: 600; font-size: 0.92em; white-space: nowrap; }
   .recipe-row .r-profit.pos { color: #4ade80; }
   .recipe-row .r-profit.neg { color: #f87171; }
@@ -410,6 +414,7 @@ let RECIPES = {}, ITEMS = {}, PRICES = {};
 let MANUAL_PRICES = {}; // itemId -> copper value (overrides AH price)
 let FORCE_METHOD = {};  // itemId -> 'buy' | 'craft' (undefined = auto)
 let currentFaction = '', currentProf = '';
+let currentSort = { field: 'profit', dir: 'desc' };
 let recipeByResult = {};
 
 // ── Init ─────────────────────────────────────────────────────────────────────
@@ -767,9 +772,16 @@ function renderProf() {
   const prof = RECIPES[currentProf];
   if (!prof) return;
 
+  const arrow = f => currentSort.field === f ? `<span class="sort-arrow">${currentSort.dir === 'asc' ? '▲' : '▼'}</span>` : '';
   const header = document.createElement('div');
   header.className = 'recipe-header';
-  header.innerHTML = `<span>Recipe</span><span>Cost</span><span>Profit</span>`;
+  header.innerHTML = `<span data-sort="name">Recipe${arrow('name')}</span><span data-sort="skill">Skill${arrow('skill')}</span><span data-sort="cost">Cost${arrow('cost')}</span><span data-sort="profit">Profit${arrow('profit')}</span>`;
+  header.querySelectorAll('span[data-sort]').forEach(s => s.onclick = () => {
+    const f = s.dataset.sort;
+    if (currentSort.field === f) currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+    else { currentSort.field = f; currentSort.dir = f === 'name' ? 'asc' : 'desc'; }
+    renderProf();
+  });
   container.appendChild(header);
 
   const list = document.createElement('div');
@@ -782,8 +794,19 @@ function renderProf() {
     const profit = (craftCost !== null && sellPrice !== null) ? sellPrice - craftCost : null;
     return { recipe, craftCost, sellPrice, profit };
   }).sort((a, b) => {
-    if (a.profit !== null && b.profit !== null) return b.profit - a.profit;
-    if (a.profit !== null) return -1; if (b.profit !== null) return 1; return 0;
+    const { field, dir } = currentSort;
+    let cmp = 0;
+    if (field === 'name') cmp = a.recipe.name.localeCompare(b.recipe.name);
+    else if (field === 'cost') {
+      if (a.craftCost !== null && b.craftCost !== null) cmp = a.craftCost - b.craftCost;
+      else if (a.craftCost !== null) cmp = -1; else if (b.craftCost !== null) cmp = 1;
+    } else if (field === 'profit') {
+      if (a.profit !== null && b.profit !== null) cmp = a.profit - b.profit;
+      else if (a.profit !== null) cmp = -1; else if (b.profit !== null) cmp = 1;
+    } else if (field === 'skill') {
+      cmp = (a.recipe.skillReq || 0) - (b.recipe.skillReq || 0);
+    }
+    return dir === 'asc' ? cmp : -cmp;
   });
 
   enriched.forEach(({ recipe, craftCost, sellPrice, profit }) => {
@@ -797,6 +820,7 @@ function renderProf() {
     row.style.display = visible ? '' : 'none';
     const cdLabel = recipe.cooldown ? `<span class="cd-tag">${recipe.cooldown >= 48 ? (recipe.cooldown / 24) + 'd cd' : recipe.cooldown + 'h cd'}</span>` : '';
     row.innerHTML = `<span class="r-name">${recipe.name}${cdLabel}</span>`
+      + `<span class="r-col r-skill">${recipe.skillReq || '—'}</span>`
       + `<span class="r-col r-cost">${formatCopper(craftCost)}</span>`
       + `<span class="r-profit ${profit !== null ? (profit >= 0 ? 'pos' : 'neg') : 'unknown'}">${profit !== null ? formatCopperCompact(profit) : '—'}</span>`;
 
