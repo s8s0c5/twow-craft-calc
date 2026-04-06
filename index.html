@@ -8,38 +8,36 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: #0c0c16;
-    color: #d4d4dc;
-    padding: 36px 40px;
-    font-size: 15px;
-    line-height: 1.55;
+    font-family: arial, helvetica, sans-serif;
+    background: #fff;
+    color: #222;
+    padding: 16px 24px;
+    font-size: 13px;
+    line-height: 1.5;
   }
 
   /* ── Drop zone ──────────────────────────────────── */
 
   .drop-zone {
-    border: 2px dashed #33334d;
-    border-radius: 8px;
-    padding: 28px 24px;
+    border: 1px dashed #999;
+    padding: 16px;
     text-align: center;
-    color: #8888a0;
+    color: #666;
     font-size: 1em;
     margin-bottom: 24px;
     max-width: 920px;
-    transition: all 0.2s;
     cursor: pointer;
     position: relative;
   }
   .drop-zone:hover, .drop-zone.drag-over {
-    border-color: #a855f7;
-    color: #c084fc;
-    background: rgba(168, 85, 247, 0.04);
+    border-color: #336699;
+    color: #336699;
+    background: rgba(0,0,0,0.03);
   }
   .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   .drop-status { margin-top: 12px; font-size: 0.9em; }
-  .drop-status.ok { color: #4ade80; }
-  .drop-status.err { color: #f87171; }
+  .drop-status.ok { color: #080; }
+  .drop-status.err { color: #c00; }
 
   /* ── Controls bar ───────────────────────────────── */
 
@@ -51,61 +49,59 @@
     flex-wrap: wrap;
   }
   .controls select {
-    background: #16162a;
-    border: 1px solid #33334d;
-    border-radius: 4px;
-    color: #d4d4dc;
-    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid #ccc;
+    color: #222;
+    padding: 4px 8px;
     font-family: inherit;
     font-size: 0.95em;
   }
-  .controls select:focus { border-color: #a855f7; outline: none; }
-  .controls label { color: #9999b0; font-size: 0.95em; }
-  .controls .ts { color: #6b6b88; font-size: 0.85em; }
+  .controls select:focus { border-color: #336699; outline: none; }
+  .controls label { color: #555; font-size: 0.95em; }
+  .controls .ts { color: #888; font-size: 0.85em; }
 
   /* ── Search ─────────────────────────────────────── */
 
   .search-wrap { max-width: 920px; margin-bottom: 16px; }
   .search-wrap input {
     width: 100%;
-    background: #16162a;
-    border: 1px solid #33334d;
-    border-radius: 6px;
-    color: #d4d4dc;
-    padding: 11px 16px;
+    background: #fff;
+    border: 1px solid #ccc;
+    color: #222;
+    padding: 6px 10px;
     font-family: inherit;
     font-size: 1em;
   }
-  .search-wrap input::placeholder { color: #55556e; }
-  .search-wrap input:focus { border-color: #a855f7; outline: none; }
+  .search-wrap input::placeholder { color: #aaa; }
+  .search-wrap input:focus { border-color: #336699; outline: none; }
 
   /* ── Profession tabs ────────────────────────────── */
 
   .prof-tabs {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 20px;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid #ccc;
   }
   .prof-tab {
-    background: #16162a;
-    border: 1px solid #33334d;
-    border-radius: 4px;
-    color: #8888a0;
-    padding: 8px 20px;
+    background: #eee;
+    border: 1px solid #ccc;
+    border-radius: 0;
+    color: #555;
+    padding: 4px 14px;
     cursor: pointer;
     font-family: inherit;
     font-size: 0.9em;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    transition: all 0.15s;
   }
-  .prof-tab:hover { color: #c0c0d0; border-color: #50506a; }
+  .prof-tab:hover { color: #222; background: #ddd; }
   .prof-tab.active {
-    background: #1e1040;
-    color: #c084fc;
-    border-color: #a855f7;
+    background: #fff;
+    color: #222;
+    border-color: #999;
+    border-bottom-color: #fff;
   }
 
   /* ── Recipe list ────────────────────────────────── */
@@ -113,61 +109,59 @@
   .recipe-list {
     display: flex;
     flex-direction: column;
-    gap: 2px;
     max-width: 920px;
+    border: 1px solid #ccc;
+    border-top: none;
   }
 
   .recipe-header {
     display: grid;
     grid-template-columns: 1fr 60px 120px 100px;
-    gap: 12px;
+    gap: 8px;
     align-items: center;
-    padding: 8px 18px;
-    font-size: 0.8em;
-    font-weight: 600;
-    color: #6b6b88;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #555;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    background: #e8e8e8;
+    border: 1px solid #ccc;
     max-width: 920px;
   }
   .recipe-header span { cursor: pointer; user-select: none; }
-  .recipe-header span:hover { color: #a0a0c0; }
+  .recipe-header span:hover { color: #000; }
   .sort-arrow { font-size: 0.7em; margin-left: 4px; }
 
   .recipe-row {
     display: grid;
     grid-template-columns: 1fr 60px 120px 100px;
-    gap: 12px;
+    gap: 8px;
     align-items: center;
-    padding: 12px 18px;
-    background: #14142a;
-    border: 1px solid #22223a;
-    border-radius: 4px;
+    padding: 5px 10px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
     cursor: pointer;
-    font-size: 1em;
-    transition: all 0.15s;
+    font-size: 13px;
   }
   .recipe-row:hover {
-    border-color: #7c3aed;
-    background: #181830;
+    background: #f5f5ff;
   }
-  .recipe-row .r-name { color: #e8e8f0; font-weight: 500; }
-  .recipe-row .r-col { color: #9999b0; font-size: 0.92em; white-space: nowrap; }
+  .recipe-row .r-name { color: #222; }
+  .recipe-row .r-col { color: #555; font-size: 0.92em; white-space: nowrap; }
   .recipe-row .r-skill { text-align: center; }
   .recipe-row .r-profit { font-weight: 600; font-size: 0.92em; white-space: nowrap; }
-  .recipe-row .r-profit.pos { color: #4ade80; }
-  .recipe-row .r-profit.neg { color: #f87171; }
-  .recipe-row .r-profit.unknown { color: #44445e; }
+  .recipe-row .r-profit.pos { color: #080; }
+  .recipe-row .r-profit.neg { color: #c00; }
+  .recipe-row .r-profit.unknown { color: #999; }
 
   /* ── Recipe detail panel ────────────────────────── */
 
   .recipe-detail {
     display: none;
-    background: #111124;
-    border: 1px solid #22223a;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
     border-top: none;
-    border-radius: 0 0 4px 4px;
-    padding: 18px 22px;
+    padding: 10px 14px;
     max-width: 920px;
   }
   .recipe-detail.open { display: block; }
@@ -180,22 +174,22 @@
     align-items: center;
     gap: 12px;
     padding: 9px 0;
-    border-bottom: 1px solid #1c1c34;
+    border-bottom: 1px solid #eee;
   }
   .reagent:last-child { border-bottom: none; }
-  .r-qty { color: #c0c0d0; font-size: 0.95em; font-weight: 600; }
-  .r-rname { color: #c8c8d8; font-size: 1em; }
-  .r-total { color: #9999b0; font-size: 0.88em; white-space: nowrap; min-width: 80px; text-align: right; }
-  .r-price.no-price { color: #f87171; font-size: 0.95em; font-style: italic; }
+  .r-qty { color: #333; font-size: 0.95em; font-weight: 600; }
+  .r-rname { color: #333; font-size: 1em; }
+  .r-total { color: #555; font-size: 0.88em; white-space: nowrap; min-width: 80px; text-align: right; }
+  .r-price.no-price { color: #c00; font-size: 0.95em; font-style: italic; }
 
   /* ── g/s/c price inputs ─────────────────────────── */
 
   .price-group { display: inline-flex; align-items: center; gap: 3px; }
   .price-group input {
-    background: #0a0a18;
-    border: 1px solid #33334d;
+    background: #fff;
+    border: 1px solid #ccc;
     border-radius: 3px;
-    color: #e8e8f0;
+    color: #222;
     padding: 5px 6px;
     width: 44px;
     font-family: 'Consolas', 'SF Mono', monospace;
@@ -206,20 +200,20 @@
   }
   .price-group input::-webkit-outer-spin-button,
   .price-group input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .price-group input:focus { border-color: #a855f7; outline: none; }
+  .price-group input:focus { border-color: #336699; outline: none; }
   .cur { font-size: 0.85em; font-weight: 600; }
-  .cur-g { color: #facc15; }
-  .cur-s { color: #a8b8cc; }
-  .cur-c { color: #d4945a; }
+  .cur-g { color: #b8860b; }
+  .cur-s { color: #708090; }
+  .cur-c { color: #b87333; }
 
   /* ── Stack popover ──────────────────────────────── */
 
   .stack-wrap { position: relative; display: inline-flex; align-items: center; }
   .stack-btn {
     background: none;
-    border: 1px solid #33334d;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    color: #6b6b88;
+    color: #888;
     width: 26px;
     height: 26px;
     cursor: pointer;
@@ -227,33 +221,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.15s;
     flex-shrink: 0;
   }
-  .stack-btn:hover, .stack-btn.open { border-color: #a855f7; color: #c084fc; }
+  .stack-btn:hover, .stack-btn.open { border-color: #336699; color: #336699; }
   .stack-panel {
     display: none;
     position: absolute;
     top: calc(100% + 6px);
     right: 0;
     z-index: 50;
-    background: #16162a;
-    border: 1px solid #a855f7;
+    background: #fff;
+    border: 1px solid #336699;
     border-radius: 6px;
     padding: 14px;
     white-space: nowrap;
     min-width: 240px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.12);
   }
   .stack-panel.open { display: block; }
-  .stack-panel-label { font-size: 0.85em; color: #8888a0; margin-bottom: 10px; font-weight: 500; }
+  .stack-panel-label { font-size: 0.85em; color: #666; margin-bottom: 10px; font-weight: 500; }
   .stack-panel-row { display: flex; align-items: center; gap: 8px; }
   .stack-qty {
     width: 54px;
-    background: #0a0a18;
-    border: 1px solid #33334d;
+    background: #fff;
+    border: 1px solid #ccc;
     border-radius: 3px;
-    color: #e8e8f0;
+    color: #222;
     padding: 5px 6px;
     font-family: 'Consolas', 'SF Mono', monospace;
     font-size: 0.9em;
@@ -263,32 +256,32 @@
   }
   .stack-qty::-webkit-outer-spin-button,
   .stack-qty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .stack-qty:focus { border-color: #a855f7; outline: none; }
-  .stack-at { color: #6b6b88; font-size: 0.9em; }
+  .stack-qty:focus { border-color: #336699; outline: none; }
+  .stack-at { color: #888; font-size: 0.9em; }
 
   /* ── Sub-reagents ───────────────────────────────── */
 
   .sub-reagents {
     margin: 6px 0 10px 48px;
-    border-left: 2px solid #2a2a44;
+    border-left: 2px solid #ccc;
     padding-left: 14px;
   }
   .sub-label {
     font-size: 0.88em;
-    color: #8888a0;
+    color: #666;
     padding: 4px 0;
     display: flex;
     align-items: center;
     gap: 8px;
   }
-  .check { color: #4ade80; }
+  .check { color: #080; }
 
   /* ── Detail footer ──────────────────────────────── */
 
   .detail-footer {
     margin-top: 16px;
     padding-top: 14px;
-    border-top: 1px solid #2a2a44;
+    border-top: 1px solid #ccc;
   }
   .detail-footer .footer-row {
     display: flex;
@@ -297,7 +290,7 @@
     padding: 5px 0;
     align-items: center;
   }
-  .detail-footer .fl { color: #8888a0; min-width: 100px; font-weight: 500; }
+  .detail-footer .fl { color: #666; min-width: 100px; font-weight: 500; }
   .detail-footer .fv { font-weight: 600; }
 
   /* ── Tags ───────────────────────────────────────── */
@@ -305,9 +298,9 @@
   .vendor-tag {
     font-size: 0.72em;
     font-weight: 600;
-    color: #34d399;
-    background: #0a2e20;
-    border: 1px solid #166534;
+    color: #080;
+    background: #efffef;
+    border: 1px solid #8c8;
     padding: 1px 7px;
     border-radius: 3px;
     margin-left: 8px;
@@ -318,9 +311,9 @@
   .cd-tag {
     font-size: 0.72em;
     font-weight: 600;
-    color: #f59e0b;
-    background: #2e1f0a;
-    border: 1px solid #92400e;
+    color: #960;
+    background: #fff8e0;
+    border: 1px solid #cc6;
     padding: 1px 7px;
     border-radius: 3px;
     margin-left: 8px;
@@ -336,10 +329,10 @@
     margin-left: 6px;
     vertical-align: middle;
   }
-  .pct-tag.pct-low { color: #4ade80; background: #0a2e20; border: 1px solid #166534; }
-  .pct-tag.pct-normal { color: #8888a0; background: #1c1c34; border: 1px solid #33334d; }
-  .pct-tag.pct-high { color: #fb923c; background: #2e1f0a; border: 1px solid #92400e; }
-  .pct-tag.pct-very-high { color: #f87171; background: #2e0a0a; border: 1px solid #991b1b; }
+  .pct-tag.pct-low { color: #080; background: #efffef; border: 1px solid #8c8; }
+  .pct-tag.pct-normal { color: #666; background: #eee; border: 1px solid #ccc; }
+  .pct-tag.pct-high { color: #960; background: #fff8e0; border: 1px solid #cc6; }
+  .pct-tag.pct-very-high { color: #c00; background: #fff0f0; border: 1px solid #e88; }
 
   /* ── Price wrap + reset ─────────────────────────── */
 
@@ -347,44 +340,53 @@
   .reset-btn {
     background: none;
     border: none;
-    color: #50506a;
+    color: #999;
     font-size: 1.05em;
     cursor: pointer;
     padding: 2px 4px;
     line-height: 1;
-    transition: color 0.15s;
     flex-shrink: 0;
   }
-  .reset-btn:hover { color: #c084fc; }
+  .reset-btn:hover { color: #336699; }
 
   /* ── Method toggle: auto / buy / craft ──────────── */
 
   .method-btns { display: inline-flex; gap: 3px; margin-left: 8px; }
   .mbtn {
     background: none;
-    border: 1px solid #33334d;
+    border: 1px solid #ccc;
     border-radius: 3px;
-    color: #6b6b88;
+    color: #888;
     font-family: inherit;
     font-size: 0.78em;
     font-weight: 500;
     padding: 3px 9px;
     cursor: pointer;
-    transition: all 0.15s;
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }
-  .mbtn:hover { border-color: #50506a; color: #b0b0c4; }
+  .mbtn:hover { border-color: #999; color: #222; }
   .mbtn.active {
-    border-color: #a855f7;
-    color: #c084fc;
-    background: #1e1040;
+    border-color: #336699;
+    color: #336699;
+    background: #e8eef8;
   }
 
 
   /* ── Empty state ────────────────────────────────── */
 
-  .empty-msg { color: #6b6b88; font-size: 1em; padding: 28px 0; max-width: 920px; }
+  .empty-msg { color: #888; font-size: 1em; padding: 28px 0; max-width: 920px; }
+
+  .leveling-toggle { font-size: 0.85em; color: #336699; cursor: pointer; text-decoration: underline; margin: 8px 0; display: inline-block; }
+  .leveling-toggle:hover { color: #222; }
+  .leveling-panel { display: none; max-width: 920px; margin-bottom: 12px; }
+  .leveling-panel.open { display: block; }
+  .leveling-panel table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+  .leveling-panel th { background: #e8e8e8; border: 1px solid #ccc; padding: 4px 8px; text-align: left; font-size: 0.78em; text-transform: uppercase; color: #555; }
+  .leveling-panel td { border: 1px solid #ddd; padding: 4px 8px; }
+  .leveling-panel tr:nth-child(even) td { background: #f5f5f5; }
+  .leveling-panel .lev-total td { font-weight: bold; background: #e0e0e0; border-top: 2px solid #999; }
+  .leveling-panel .lev-src { padding: 6px 8px; font-size: 0.78em; color: #999; }
 </style>
 </head>
 <body>
@@ -392,9 +394,9 @@
 <div class="drop-zone" id="drop-zone">
   Drop your <b>aux-addon.lua</b> here or click to browse
   <input type="file" id="file-input" accept=".lua">
-  <div style="margin-top:12px;font-size:0.85em;color:#6b6b88;">
-    Usually found at: <code id="path-hint" style="color:#9999b0;cursor:pointer;background:#16162a;padding:3px 8px;border:1px solid #33334d;border-radius:3px;" title="Click to copy">C:\Games\TurtleWoW\WTF\Account\&lt;ACCOUNT&gt;\SavedVariables\aux-addon.lua</code>
-    <span id="copy-msg" style="color:#4ade80;margin-left:8px;display:none;">copied!</span>
+  <div style="margin-top:12px;font-size:0.85em;color:#888;">
+    Usually found at: <code id="path-hint" style="color:#555;cursor:pointer;background:#fff;padding:3px 8px;border:1px solid #ccc;border-radius:3px;" title="Click to copy">C:\Games\TurtleWoW\WTF\Account\&lt;ACCOUNT&gt;\SavedVariables\aux-addon.lua</code>
+    <span id="copy-msg" style="color:#080;margin-left:8px;display:none;">copied!</span>
   </div>
   <div class="drop-status" id="drop-status"></div>
 </div>
@@ -407,6 +409,10 @@
 
 <div class="search-wrap"><input type="text" id="search-box" placeholder="Search recipes..."></div>
 <div class="prof-tabs" id="prof-tabs"></div>
+<div style="max-width:920px;margin:8px 0;">
+  <a href="#" id="leveling-toggle" class="leveling-toggle">Show Leveling Cost</a>
+  <div class="leveling-panel" id="leveling-panel"></div>
+</div>
 <div id="recipe-container"></div>
 
 <script>
@@ -416,6 +422,63 @@ let FORCE_METHOD = {};  // itemId -> 'buy' | 'craft' (undefined = auto)
 let currentFaction = '', currentProf = '';
 let currentSort = { field: 'profit', dir: 'desc' };
 let recipeByResult = {};
+
+const LEVELING_GUIDES = {
+  "Alchemy": [
+    {id:2447,name:"Peacebloom",qty:65},{id:765,name:"Silverleaf",qty:65},{id:3371,name:"Empty Vial",qty:85},
+    {id:2450,name:"Briarthorn",qty:100},{id:2453,name:"Bruiseweed",qty:35},{id:3372,name:"Leaded Vial",qty:105},
+    {id:785,name:"Mageroyal",qty:20},{id:3820,name:"Stranglekelp",qty:50},{id:3357,name:"Liferoot",qty:35},
+    {id:3356,name:"Kingsblood",qty:35},{id:3821,name:"Goldthorn",qty:35},{id:3355,name:"Wild Steelbloom",qty:5},
+    {id:8838,name:"Sungrass",qty:75},{id:3358,name:"Khadgar's Whisker",qty:15},{id:8925,name:"Crystal Vial",qty:120},
+    {id:8836,name:"Arthas' Tears",qty:45},{id:8839,name:"Blindweed",qty:60},
+    {id:13464,name:"Golden Sansam",qty:75},{id:13465,name:"Mountain Silversage",qty:20}
+  ],
+  "Blacksmithing": [
+    {id:2835,name:"Rough Stone",qty:150},{id:2840,name:"Copper Bar",qty:150},{id:2836,name:"Coarse Stone",qty:95},
+    {id:2842,name:"Silver Bar",qty:5},{id:2841,name:"Bronze Bar",qty:140},{id:2838,name:"Heavy Stone",qty:105},
+    {id:3577,name:"Gold Bar",qty:5},{id:3575,name:"Iron Bar",qty:230},{id:2605,name:"Green Dye",qty:35},
+    {id:3859,name:"Steel Bar",qty:190},{id:7912,name:"Solid Stone",qty:480},{id:4338,name:"Mageweave Cloth",qty:60},
+    {id:3860,name:"Mithril Bar",qty:220},{id:12365,name:"Dense Stone",qty:20},{id:12359,name:"Thorium Bar",qty:730},
+    {id:7910,name:"Star Ruby",qty:30},{id:7909,name:"Aquamarine",qty:5}
+  ],
+  "Engineering": [
+    {id:2835,name:"Rough Stone",qty:60},{id:2840,name:"Copper Bar",qty:66},{id:2836,name:"Coarse Stone",qty:60},
+    {id:2589,name:"Linen Cloth",qty:50},{id:2842,name:"Silver Bar",qty:5},{id:2841,name:"Bronze Bar",qty:110},
+    {id:2838,name:"Heavy Stone",qty:30},{id:1206,name:"Moss Agate",qty:10},{id:2592,name:"Wool Cloth",qty:60},
+    {id:2319,name:"Medium Leather",qty:15},{id:3859,name:"Steel Bar",qty:4},{id:7912,name:"Solid Stone",qty:120},
+    {id:3860,name:"Mithril Bar",qty:170},{id:4338,name:"Mageweave Cloth",qty:20},{id:12365,name:"Dense Stone",qty:60},
+    {id:12359,name:"Thorium Bar",qty:225},{id:14047,name:"Runecloth",qty:35}
+  ],
+  "Tailoring": [
+    {id:2589,name:"Linen Cloth",qty:204},{id:2592,name:"Wool Cloth",qty:135},{id:4306,name:"Silk Cloth",qty:804},
+    {id:4338,name:"Mageweave Cloth",qty:470},{id:14047,name:"Runecloth",qty:1195},{id:8170,name:"Rugged Leather",qty:110}
+  ],
+  "Leatherworking": [
+    {id:2934,name:"Ruined Leather Scraps",qty:57},{id:2318,name:"Light Leather",qty:470},{id:2319,name:"Medium Leather",qty:335},
+    {id:4235,name:"Heavy Hide",qty:20},{id:4234,name:"Heavy Leather",qty:195},{id:4304,name:"Thick Leather",qty:650},
+    {id:8170,name:"Rugged Leather",qty:400},{id:14047,name:"Runecloth",qty:100}
+  ],
+  "Enchanting": [
+    {id:10940,name:"Strange Dust",qty:125},{id:10938,name:"Lesser Magic Essence",qty:1},
+    {id:10939,name:"Greater Magic Essence",qty:12},{id:10998,name:"Lesser Astral Essence",qty:25},
+    {id:11083,name:"Soul Dust",qty:130},{id:11082,name:"Greater Astral Essence",qty:2},
+    {id:11137,name:"Vision Dust",qty:250},{id:11135,name:"Greater Mystic Essence",qty:2},
+    {id:11174,name:"Lesser Nether Essence",qty:5},{id:11176,name:"Dream Dust",qty:360},
+    {id:8831,name:"Purple Lotus",qty:40},{id:16204,name:"Illusion Dust",qty:40},
+    {id:16203,name:"Greater Eternal Essence",qty:4},{id:14343,name:"Small Brilliant Shard",qty:4},
+    {id:14344,name:"Large Brilliant Shard",qty:2},{id:6338,name:"Silver Rod",qty:1},
+    {id:1210,name:"Shadowgem",qty:1},{id:11128,name:"Golden Rod",qty:1},
+    {id:5500,name:"Iridescent Pearl",qty:1},{id:11144,name:"Truesilver Rod",qty:1},
+    {id:7971,name:"Black Pearl",qty:1},{id:16206,name:"Arcanite Rod",qty:1},
+    {id:13926,name:"Golden Pearl",qty:1}
+  ],
+  "Cooking": [
+    {id:769,name:"Chunk of Boar Meat",qty:55},{id:3173,name:"Bear Meat",qty:65},
+    {id:2674,name:"Crawler Meat",qty:40},{id:3685,name:"Raptor Egg",qty:50},
+    {id:12184,name:"Raptor Flesh",qty:50},{id:12207,name:"Giant Egg",qty:65},
+    {id:13759,name:"Raw Nightfin Snapper",qty:35}
+  ]
+};
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 
@@ -668,7 +731,7 @@ function formatCopper(val) {
   if (val === null || val === undefined) return '<span class="cur-s">—</span>';
   const neg = val < 0; val = Math.abs(Math.round(val));
   const g = Math.floor(val / 10000), s = Math.floor((val % 10000) / 100), c = val % 100;
-  let str = neg ? '<span style="color:#f87171">-</span>' : '';
+  let str = neg ? '<span style="color:#c00">-</span>' : '';
   if (g > 0) str += `<span class="cur-g">${g}g</span> `;
   str += `<span class="cur-s">${s}s</span> <span class="cur-c">${c}c</span>`;
   return str;
@@ -718,7 +781,7 @@ function onPricesLoaded(timestamp) {
   factions.forEach(f => { const o = document.createElement('option'); o.value = f; o.textContent = f; factionSel.appendChild(o); });
   if (factions.length && !factions.includes(currentFaction)) currentFaction = factions[0];
   factionSel.value = currentFaction;
-  factionSel.onchange = () => { currentFaction = factionSel.value; renderProf(); };
+  factionSel.onchange = () => { currentFaction = factionSel.value; renderProf(); const lp = document.getElementById('leveling-panel'); if (lp && lp.classList.contains('open')) renderLevelingGuide(); };
   if (timestamp) document.getElementById('price-ts').textContent = 'Updated: ' + new Date(timestamp).toLocaleString();
   renderProf();
 }
@@ -735,6 +798,8 @@ function buildProfTabs() {
       tabsEl.querySelectorAll('.prof-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       renderProf();
+      const lp = document.getElementById('leveling-panel');
+      if (lp && lp.classList.contains('open')) renderLevelingGuide();
     };
     tabsEl.appendChild(tab);
   });
@@ -886,7 +951,7 @@ function buildDetail(container, recipe) {
               + `<span class="stack-at">@</span>${priceGroupHTML()}</div></div></span>`;
         html += `</div>`;
       });
-      html += `<div class="sub-label buy-cheaper-label" style="display:none;color:#4ade80;"><span class="check">✓</span> buying is cheaper</div>`;
+      html += `<div class="sub-label buy-cheaper-label" style="display:none;color:#080;"><span class="check">✓</span> buying is cheaper</div>`;
       html += `</div>`;
     }
   });
@@ -894,7 +959,7 @@ function buildDetail(container, recipe) {
   // Sell price row in footer
   html += `<div class="detail-footer">`;
   html += `<div class="footer-row"><span class="fl">Craft cost</span><span class="fv craft-cost-val">—</span></div>`;
-  html += `<div class="footer-row"><span class="fl">Sell price <span style="color:#6b6b88;font-size:0.82em">(-5%)</span></span>`
+  html += `<div class="footer-row"><span class="fl">Sell price <span style="color:#888;font-size:0.82em">(-5%)</span></span>`
         + priceGroupHTML('sell')
         + `<span class="stack-wrap"><button type="button" class="stack-btn" title="Stack calc">÷</button>`
         + `<div class="stack-panel"><div class="stack-panel-label">Stack calculator</div>`
@@ -1064,6 +1129,36 @@ function buildDetail(container, recipe) {
   recalcDetail();
 }
 
+// ── Leveling Guide ───────────────────────────────────────────────────────────
+
+function renderLevelingGuide() {
+  const panel = document.getElementById('leveling-panel');
+  const profData = RECIPES[currentProf];
+  if (!profData) { panel.innerHTML = ''; return; }
+  const guide = LEVELING_GUIDES[profData.name];
+  if (!guide) {
+    panel.innerHTML = '<div class="lev-src">No leveling guide available for this profession.</div>';
+    return;
+  }
+  let html = '<table><tr><th>Material</th><th>Qty</th><th>Unit Price</th><th>Line Total</th></tr>';
+  let grandTotal = 0, hasUnknown = false;
+  guide.forEach(mat => {
+    const price = getEffectivePrice(mat.id);
+    const lineTotal = price !== null ? price * mat.qty : null;
+    if (lineTotal !== null) grandTotal += lineTotal; else hasUnknown = true;
+    const displayName = (ITEMS[String(mat.id)] && ITEMS[String(mat.id)].name) || mat.name;
+    const isVendor = VENDOR_PRICES[mat.id] !== undefined;
+    html += '<tr><td>' + displayName + (isVendor ? ' <span class="vendor-tag">vendor</span>' : '') + '</td>';
+    html += '<td>' + mat.qty + '</td>';
+    html += '<td>' + formatCopper(price) + '</td>';
+    html += '<td>' + formatCopper(lineTotal) + '</td></tr>';
+  });
+  html += '<tr class="lev-total"><td colspan="3">Total Cost (1-300)</td><td>' + formatCopper(grandTotal) + (hasUnknown ? ' (partial)' : '') + '</td></tr>';
+  html += '</table>';
+  html += '<div class="lev-src">Source: wow-professions.com Classic leveling guides. Quantities are approximate.</div>';
+  panel.innerHTML = html;
+}
+
 // ── Search ───────────────────────────────────────────────────────────────────
 
 document.getElementById('search-box').addEventListener('input', function() {
@@ -1081,6 +1176,14 @@ document.getElementById('search-box').addEventListener('input', function() {
 document.addEventListener('DOMContentLoaded', () => {
   setupDropZone();
   init();
+
+  document.getElementById('leveling-toggle').addEventListener('click', function(e) {
+    e.preventDefault();
+    const panel = document.getElementById('leveling-panel');
+    const isOpen = panel.classList.contains('open');
+    if (!isOpen) { renderLevelingGuide(); panel.classList.add('open'); this.textContent = 'Hide Leveling Cost'; }
+    else { panel.classList.remove('open'); this.textContent = 'Show Leveling Cost'; }
+  });
 
   const hint = document.getElementById('path-hint');
   const copyMsg = document.getElementById('copy-msg');
